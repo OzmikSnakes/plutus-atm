@@ -9,14 +9,23 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    creditlimit.cpp \
     main.cpp \
-    mainwindow.cpp
+    mainmenu.cpp \
+    mainwindow.cpp \
+    transfers.cpp
 
 HEADERS += \
-    mainwindow.h
+    creditlimit.h \
+    mainmenu.h \
+    mainwindow.h \
+    transfers.h
 
 FORMS += \
-    mainwindow.ui
+    creditlimit.ui \
+    mainmenu.ui \
+    mainwindow.ui \
+    transfers.ui
 
 TRANSLATIONS += \
     plutus-atm_uk_UA.ts

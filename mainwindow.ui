@@ -92,6 +92,12 @@
      <height>21</height>
     </rect>
    </property>
+   <widget class="QMenu" name="menuWelcome">
+    <property name="title">
+     <string>Welcome</string>
+    </property>
+   </widget>
+   <addaction name="menuWelcome"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
  </widget>
