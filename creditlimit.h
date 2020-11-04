@@ -1,18 +1,18 @@
 #ifndef CREDITLIMIT_H
 #define CREDITLIMIT_H
 
-#include <QWidget>
+#include <QDialog>
 
 namespace Ui {
 class CreditLimit;
 }
 
-class CreditLimit : public QWidget
+class CreditLimit : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit CreditLimit(QWidget *parent = nullptr);
+    explicit CreditLimit(QDialog *parent = nullptr);
     ~CreditLimit();
 
 private:

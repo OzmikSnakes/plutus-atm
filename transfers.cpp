@@ -1,8 +1,8 @@
 #include "transfers.h"
 #include "ui_transfers.h"
 
-Transfers::Transfers(QWidget *parent) :
-    QWidget(parent),
+Transfers::Transfers(QDialog *parent) :
+    QDialog(parent),
     ui(new Ui::Transfers)
 {
     ui->setupUi(this);

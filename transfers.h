@@ -1,18 +1,18 @@
 #ifndef TRANSFERS_H
 #define TRANSFERS_H
 
-#include <QWidget>
+#include <QDialog>
 
 namespace Ui {
 class Transfers;
 }
 
-class Transfers : public QWidget
+class Transfers : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit Transfers(QWidget *parent = nullptr);
+    explicit Transfers(QDialog *parent = nullptr);
     ~Transfers();
 
 private:
