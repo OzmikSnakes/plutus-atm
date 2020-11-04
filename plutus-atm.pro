@@ -9,23 +9,24 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    creditlimit.cpp \
+    ConverterHandler.cpp \
+    RequestsImpl.cpp \
+    ResponsesImpl.cpp \
+    ToJsonConverterImpl.cpp \
     main.cpp \
-    mainmenu.cpp \
-    mainwindow.cpp \
-    transfers.cpp
+    requester.cpp
 
 HEADERS += \
-    creditlimit.h \
-    mainmenu.h \
-    mainwindow.h \
-    transfers.h
+    ConverterHandler.h \
+    FromJsonConverter.h \
+    RequestHandler.h \
+    Requests.h \
+    Responses.h \
+    RestRequest.h \
+    ToJsonConverter.h \
+    requester.h
 
-FORMS += \
-    creditlimit.ui \
-    mainmenu.ui \
-    mainwindow.ui \
-    transfers.ui
+FORMS +=
 
 TRANSLATIONS += \
     plutus-atm_uk_UA.ts
