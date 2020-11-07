@@ -22,7 +22,6 @@ QVariantMap MakeTransferRequest::toQVariantMap() const
 QVariantMap ATMTokenRequest::toQVariantMap() const
 {
     QVariantMap map = QVariantMap();
-    map["atmKey"] = atmKey;
     map["accountId"] = accountId;
     map["pin"] = pin;
     return map;

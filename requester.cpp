@@ -123,7 +123,7 @@
 //QByteArray Requester::variantMapToJson(QVariantMap data)
 //{
 //    QJsonDocument postDataDoc = QJsonDocument::fromVariant(data);
-//    QByteArray postDataByteArray = postDataDoc.toJson();
+//    QByteArray postDataByteArray = postDataDoc.jsonRepresentation();
 
 //    return postDataByteArray;
 //}

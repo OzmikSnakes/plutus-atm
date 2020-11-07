@@ -3,17 +3,19 @@
 #include <typeinfo>
 
 #include "Requests.h"
-#include "ConverterHandler.h"
-
+#include "converter_handler.h"
 
 int main(int argc, char* argv[])
 {
-	ConverterHandler converterHandler = ConverterHandler();
-	ATMTokenRequest request = ATMTokenRequest();
-	request.setPin("1").setAccountId("1").setAtmKey("1");
-	qInfo() << typeid(request).name();
-	const ToJsonConverter<ATMTokenRequest>& converter = ATMTokenRequestToJsonConverter();
-	converterHandler.addConverter(converter);
-	// //    QByteArray json = converterHandler.toJson(request);
-	// //    qInfo() << json.toStdString().c_str();
+	ConverterHandler converter_handler;
+	ATMTokenRequest token_request;
+	token_request.accountId = 1;
+	token_request.pin = "123";
+	const ToJsonConvertableConverter converter;
+	converter_handler.addConverter(converter);
+
+	const void* c = new int{ 1 };
+	const int* x = static_cast<const int*>(c);
+
+	qInfo() << converter_handler.toJson<const ToJsonConvertable&>(token_request);
 }

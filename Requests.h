@@ -2,16 +2,9 @@
 #define REQUESTS_H
 
 #include <QString>
+#include "converter.h"
 
 // TODO: think about structures
-
-class ToJsonConvertable
-{
-	virtual QVariantMap toQVariantMap() const = 0;
-	virtual ~ToJsonConvertable() = default;
-public:
-	QVariantMap jsonSchema() const;
-};
 
 class MakeTransferRequest final : public ToJsonConvertable
 {
@@ -28,7 +21,6 @@ class ATMTokenRequest final : public ToJsonConvertable
 {
 	QVariantMap toQVariantMap() const override;
 public:
-	QString atmKey;
 	QString accountId;
 	QString pin;
 };
