@@ -1,84 +1,79 @@
-//#ifndef REQUESTER_H
-//#define REQUESTER_H
+#pragma once
 
-//#include <QObject>|
-//#include <QBuffer>
-//#include <QtNetwork/QNetworkAccessManager>
-//#include <QtNetwork/QNetworkReply>
-//#include <QtNetwork/QNetworkRequest>
-//#include <QJsonObject>
-//#include <QJsonArray>
-//#include <QJsonDocument>
-//#include <functional>
+#include <QObject>
+#include <QtNetwork/QNetworkReply>
+#include <QtNetwork/QNetworkRequest>
+#include <QJsonObject>
+#include <QJsonDocument>
+#include <functional>
 
-//class Requester : public QObject
-//{
-//    Q_OBJECT
-//public:
-//    typedef std::function<void(const QJsonObject &)> handleFunc;
-//    typedef std::function<void()> finishFunc;
+class Requester : public QObject
+{
+Q_OBJECT
+public:
+	typedef std::function<void(const QJsonObject&)> handleFunc;
+	typedef std::function<void()> finishFunc;
 
-//    static const QString KEY_QNETWORK_REPLY_ERROR;
-//    static const QString KEY_CONTENT_NOT_FOUND;
+	static const QString KEY_QNETWORK_REPLY_ERROR;
+	static const QString KEY_CONTENT_NOT_FOUND;
 
-//    enum class Type {
-//        POST,
-//        GET,
-//        PATCH,
-//        DELET
-//    };
+	enum class Type
+	{
+		POST,
+		GET,
+		PATCH,
+		DELETE
+	};
 
-//    explicit Requester(QObject *parent = 0);
+	explicit Requester(QObject* parent = nullptr);
 
-//    void initRequester(const QString& host, int port, QSslConfiguration *value);
+	void initRequester(const QString& host, int port, QSslConfiguration* value);
 
-//    void sendRequest(const QString &apiStr,
-//                     const handleFunc &funcSuccess,
-//                     const handleFunc &funcError,
-//                     Type type = Type::GET,
-//                     const QVariantMap &data = QVariantMap());
+	void sendRequest(const QString& apiStr,
+	                 const handleFunc& funcSuccess,
+	                 const handleFunc& funcError,
+	                 Type type = Type::GET,
+	                 const QVariantMap& data = QVariantMap());
 
 
-//    void sendMulishGetRequest(const QString &apiStr,
-//                              const handleFunc &funcSuccess,
-//                              const handleFunc &funcError,
-//                              const finishFunc &funcFinish);
+	void sendMulishGetRequest(const QString& apiStr,
+	                          const handleFunc& funcSuccess,
+	                          const handleFunc& funcError,
+	                          const finishFunc& funcFinish);
 
-//    QString getToken() const;
-//    void setToken(const QString &value);
+	QString getToken() const;
+	void setToken(const QString& value);
 
-//private:
-//    static const QString httpTemplate;
-//    static const QString httpsTemplate;
+private:
+	static const QString httpTemplate;
+	static const QString httpsTemplate;
 
-//    QString host;
-//    int port;
-//    QString token;
-//    QSslConfiguration *sslConfig;
+	QString host;
+	int port;
+	QString token;
+	QSslConfiguration* sslConfig;
 
-//    QString pathTemplate;
+	QString pathTemplate;
 
-//    QByteArray variantMapToJson(QVariantMap data);
+	QByteArray variantMapToJson(QVariantMap data);
 
-//    QNetworkRequest createRequest(const QString &apiStr);
+	QNetworkRequest createRequest(const QString& apiStr);
 
-//    QNetworkReply *sendCustomRequest(QNetworkAccessManager *manager,
-//                                     QNetworkRequest &request,
-//                                     const QString &type,
-//                                     const QVariantMap &data);
+	QNetworkReply* sendCustomRequest(QNetworkAccessManager* manager,
+	                                 QNetworkRequest& request,
+	                                 const QString& type,
+	                                 const QVariantMap& data);
 
-//    QJsonObject parseReply(QNetworkReply *reply);
+	QJsonObject parseReply(QNetworkReply* reply);
 
-//    bool onFinishRequest(QNetworkReply *reply);
+	bool onFinishRequest(QNetworkReply* reply);
 
-//    void handleQtNetworkErrors(QNetworkReply *reply, QJsonObject &obj);
-//    QNetworkAccessManager *manager;
+	void handleQtNetworkErrors(QNetworkReply* reply, QJsonObject& obj);
+	QNetworkAccessManager* manager;
 
-//signals:
-//    void networkError();
+signals:
+	void networkError();
 
 
-//public slots:
-//};
-
-//#endif // REQUESTER_H
+public slots:
+};

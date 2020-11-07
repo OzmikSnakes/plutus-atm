@@ -1,5 +1,4 @@
-#include "Requests.h"
-#include <QObject>
+#include "requests.h"
 #include <QJsonDocument> 
 
 QByteArray ToJsonConvertableConverter::jsonRepresentation(const ToJsonConvertable& to_convert) const

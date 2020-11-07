@@ -9,6 +9,14 @@ public:
 	virtual ~ToJsonConverter() = default;
 };
 
+template <class T>
+class FromJsonConverter
+{
+public:
+	virtual T fromJson(QByteArray) = 0;
+	virtual ~FromJsonConverter() = default;
+};
+
 
 class ToJsonConvertable
 {
