@@ -71,3 +71,7 @@ Thumbs.db
 *.dll
 *.exe
 
+.vs
+debug
+release
+/plutus-atm.sln.DotSettings.user
