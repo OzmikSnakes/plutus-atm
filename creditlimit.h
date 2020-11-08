@@ -12,7 +12,7 @@ class CreditLimit : public QDialog
     Q_OBJECT
 
 public:
-    explicit CreditLimit(QDialog *parent = nullptr);
+    explicit CreditLimit(QWidget *parent = nullptr);
     ~CreditLimit();
 
 private:

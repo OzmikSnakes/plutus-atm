@@ -1,27 +1,29 @@
-#ifndef ATM_H
-#define ATM_H
+#ifndef LOGIN_H
+#define LOGIN_H
 
 #include <QDialog>
 
 namespace Ui {
-class ATM;
+class Login;
 }
 
-class ATM : public QDialog
+class Login : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit ATM(QWidget *parent = nullptr);
-    ~ATM();
+    explicit Login(QWidget *parent = nullptr);
+    ~Login();
 
 private slots:
-    void on_pushButton_clicked();
+    void on_login_pushButton_clicked();
 
-    void on_pushButton_2_clicked();
+    void on_cancel_pushButton_clicked();
+
+    void on_login2_pushButton_clicked();
 
 private:
-    Ui::ATM *ui;
+    Ui::Login *ui;
 };
 
-#endif // ATM_H
+#endif // LOGIN_H
