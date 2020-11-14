@@ -4,16 +4,14 @@
 #include <QString>
 #include "converter.h"
 
-// TODO: think about structures
-
 class MakeTransferRequest final : public ToJsonConvertable
 {
 	QVariantMap toQVariantMap() const override;
 public:
-	long toId;
+    long toId;
 	long fromId;
 	double amount;
-	QString description;
+    std::string description;
 };
 
 
@@ -21,8 +19,8 @@ class ATMTokenRequest final : public ToJsonConvertable
 {
 	QVariantMap toQVariantMap() const override;
 public:
-	QString accountId;
-	QString pin;
+    std::string accountId;
+    std::string pin;
 };
 
 
@@ -38,14 +36,14 @@ class CreateAutomaticTransferRequest final : public ToJsonConvertable
 {
 	QVariantMap toQVariantMap() const override;
 public:
-	QString name;
+    std::string name;
 	long fromId;
 	long toId;
 	long period;
 	long nextPaymentTime;
 	double transferAmount;
 	double toPayAmount;
-	QString description;
+    std::string description;
 };
 
 #endif

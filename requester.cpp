@@ -1,6 +1,132 @@
 #include "requester.h"
+#include "session_manager.h"
 
-const QString Requester::httpTemplate = "http://%1:%2/api/%3";
+RequesterConfiguration RequesterConfiguration::operator=(const RequesterConfiguration& config)
+{
+    host = config.host;
+    port = config.port;
+    apiPath = config.apiPath;
+    //sslConfig = QSslConfiguration::defaultConfiguration();//config.sslConfig;
+    return *this;
+}
+
+Requester::Requester(const RequesterConfiguration &config)
+{
+    this->config = config;
+    manager = new QNetworkAccessManager();
+    const ToJsonConvertableConverter converter;
+    converterHandler.addConverter(converter);
+}
+
+QNetworkRequest Requester::createRequest(const std::string &path)
+{
+    QNetworkRequest request;
+    QString requestUrl = QString::fromStdString("https://%1:%2/%3/%4")
+            .arg(QString::fromStdString(config.host))
+            .arg(QString(config.port))
+            .arg(QString::fromStdString(config.apiPath))
+            .arg(QString::fromStdString(path));
+    request.setUrl(QUrl(requestUrl));
+    request.setRawHeader("Content-Type", "application/json");
+    QString token = QString::fromStdString(SessionManager::getInstance()->getCurrentSession().getToken());
+    request.setRawHeader("Authorization", QString("Bearer %1").arg(token).toUtf8());
+    request.setSslConfiguration(config.sslConfig);
+    return request;
+}
+
+template <class R, class C>
+void Requester::sendRequest(const RestRequest<R, C>& restRequest)
+{
+    QByteArray dataByteArray;
+    if (restRequest.request_object() != nullptr)
+        dataByteArray = converterHandler.toJson(restRequest.request_object());
+    QNetworkRequest request = createRequest(restRequest.path);
+    QNetworkReply *reply;
+    switch (restRequest.type) {
+    case RequestType::POST: {
+        reply = manager->post(request, dataByteArray);
+        break;
+    } case RequestType::PUT: {
+        reply = manager->put(request, dataByteArray);
+        break;
+    } case RequestType::GET: {
+        reply = manager->get(request);
+        break;
+    } case RequestType::DELETE: {
+        if (dataByteArray == nullptr)
+            reply = manager->deleteResource(request);
+        else
+            reply = sendCustomRequest(request, "DELETE", dataByteArray);
+        break;
+    } case RequestType::PATCH: {
+        reply = sendCustomRequest(request, "PATCH", dataByteArray);
+        break;
+    } default:
+        reply = nullptr;
+        Q_ASSERT(false);
+    }
+
+    connect(reply, &QNetworkReply::finished, this, [this, restRequest, reply]() {
+        C responseObject = parseReply<C>(reply);
+        if (onFinishRequest(reply))
+            restRequest.success_handler().handle(responseObject);
+        else
+            responseObject.error_handler().handle(responseObject);
+        reply->close();
+        reply->deleteLater();
+    });
+}
+
+
+// todo make converter
+template <class C>
+C Requester::parseReply(QNetworkReply *reply)
+{
+     C responseObject;
+     QJsonDocument jsonDoc;
+     QJsonParseError parseError;
+     QByteArray replyDataByteArray = reply->readAll();
+     jsonDoc = QJsonDocument::fromJson(replyDataByteArray, &parseError);
+
+     // from json converter
+
+     /*if (parseError.error != QJsonParseError::NoError) {
+         qDebug() << replyDataByteArray;
+         qWarning() << "Json parse error: " << parseError.errorString();
+     } else {
+         if (jsonDoc.isObject())
+             jsonObj = jsonDoc.object();
+         else if (jsonDoc.isArray())
+             jsonObj["non_field_errors"] = jsonDoc.array();
+     }*/
+     return responseObject;
+}
+
+bool Requester::onFinishRequest(QNetworkReply *reply)
+{
+    QNetworkReply::NetworkError replyError = reply->error();
+    if (replyError == QNetworkReply::NoError) {
+        int errorCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+        if ((errorCode >=200) && (errorCode < 300))
+            return true;
+    }
+    return false;
+}
+
+QNetworkReply* Requester::sendCustomRequest(const QNetworkRequest &request, const QString& type, const QByteArray &dataByteArray)
+{
+    // request.setRawHeader("HTTP", type);
+    QBuffer *buff = new QBuffer;
+    buff->setData(dataByteArray);
+    // maybe ReadWrite
+    buff->open((QBuffer::ReadOnly));
+    QNetworkReply* reply;
+    reply = manager->sendCustomRequest(request, type.toUtf8(), buff);
+    buff->setParent(reply);
+    return reply;
+}
+
+/*const QString Requester::httpTemplate = "http://%1:%2/api/%3";
 const QString Requester::httpsTemplate = "https://%1:%2/api/%3";
 const QString Requester::KEY_QNETWORK_REPLY_ERROR = "QNetworkReplyError";
 const QString Requester::KEY_CONTENT_NOT_FOUND = "ContentNotFoundError";
@@ -69,63 +195,6 @@ void Requester::sendRequest(const QString &apiStr,
         reply->deleteLater();
     } );
 
-}
-
-void Requester::sendMulishGetRequest(const QString &apiStr, //а ничего что здесь нигде не проверяется func != nullptr?
-                                     const handleFunc &funcSuccess,
-                                     const handleFunc &funcError,
-                                     const finishFunc &funcFinish)
-{
-    QNetworkRequest request = createRequest(apiStr);
-    //    QNetworkReply *reply;
-    qInfo() << "GET REQUEST " << request.url().toString() << "\n";
-    auto reply = manager->get(request);
-
-    connect(reply, &QNetworkReply::finished, this,
-            [this, funcSuccess, funcError, funcFinish, reply]() {
-        QJsonObject obj = parseReply(reply);
-        if (onFinishRequest(reply)) {
-            if (funcSuccess != nullptr)
-                funcSuccess(obj);
-            QString nextPage = obj.value("next").toString();
-            if (!nextPage.isEmpty()) {
-                QStringList apiMethodWithPage = nextPage.split("api/");
-                sendMulishGetRequest(apiMethodWithPage.value(1),
-                                     funcSuccess,
-                                     funcError,
-                                     funcFinish
-                                     );
-            } else {
-                if (funcFinish != nullptr)
-                    funcFinish();
-            }
-        } else {
-            handleQtNetworkErrors(reply, obj);
-            if (funcError != nullptr)
-                funcError(obj);
-        }
-        reply->close();
-        reply->deleteLater();
-    });
-}
-
-
-QString Requester::getToken() const
-{
-    return token;
-}
-
-void Requester::setToken(const QString &value)
-{
-    token = value;
-}
-
-QByteArray Requester::variantMapToJson(QVariantMap data)
-{
-    QJsonDocument postDataDoc = QJsonDocument::fromVariant(data);
-    QByteArray postDataByteArray = postDataDoc.toJson();
-
-    return postDataByteArray;
 }
 
 QNetworkRequest Requester::createRequest(const QString &apiStr)
@@ -202,4 +271,4 @@ void Requester::handleQtNetworkErrors(QNetworkReply *reply, QJsonObject &obj)
         obj[KEY_QNETWORK_REPLY_ERROR] = reply->errorString();
     } else if (replyError == QNetworkReply::ContentNotFoundError)
         obj[KEY_CONTENT_NOT_FOUND] = reply->errorString();
-}
+}*/

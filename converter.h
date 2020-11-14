@@ -23,11 +23,11 @@ class ToJsonConvertable
 	virtual QVariantMap toQVariantMap() const = 0;
 public:
 	QVariantMap jsonSchema() const;
-	virtual ~ToJsonConvertable() = default;
+    virtual ~ToJsonConvertable() = default;
 };
 
 class ToJsonConvertableConverter final : public ToJsonConverter<const ToJsonConvertable&>
 {
 public:
-	QByteArray jsonRepresentation(const ToJsonConvertable&) const override;
+    QByteArray jsonRepresentation(const ToJsonConvertable&) const override;
 };

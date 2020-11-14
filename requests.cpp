@@ -12,25 +12,25 @@ QVariantMap ToJsonConvertable::jsonSchema() const
 QVariantMap MakeTransferRequest::toQVariantMap() const
 {
     QVariantMap map = QVariantMap();
-    map["toId"] = toId;
-    map["fromId"] = fromId;
+    map["toId"] = QString::number(toId);
+    map["fromId"] = QString::number(fromId);
     map["amount"] = amount;
-    map["description"] = description;
+    map["description"] = QString::fromStdString(description);
     return map;
 }
 
 QVariantMap ATMTokenRequest::toQVariantMap() const
 {
     QVariantMap map = QVariantMap();
-    map["accountId"] = accountId;
-    map["pin"] = pin;
+    map["accountId"] = QString::fromStdString(accountId);
+    map["pin"] = QString::fromStdString(pin);
     return map;
 }
 
 QVariantMap ChangeBalanceRequest::toQVariantMap() const
 {
     QVariantMap map = QVariantMap();
-    map["accountId"] = accountId;
+    map["accountId"] = QString::number(accountId);
     map["amount"] = amount;
     return map;
 }
@@ -38,12 +38,12 @@ QVariantMap ChangeBalanceRequest::toQVariantMap() const
 QVariantMap CreateAutomaticTransferRequest::toQVariantMap() const
 {
     QVariantMap map = QVariantMap();
-    map["toId"] = toId;
-    map["fromId"] = fromId;
-    map["name"] = name;
-    map["description"] = description;
-    map["nextPaymentTime"] = nextPaymentTime;
-    map["period"] = period;
+    map["toId"] = QString::number(toId);
+    map["fromId"] = QString::number(fromId);
+    map["name"] = QString::fromStdString(name);
+    map["description"] = QString::fromStdString(description);
+    map["nextPaymentTime"] = QString::number(nextPaymentTime);
+    map["period"] = QString::number(period);
     map["transferAmount"] = transferAmount;
     map["toPayAmount"] = toPayAmount;
     return map;

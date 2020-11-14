@@ -9,22 +9,25 @@ CONFIG += c++11
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    ConverterHandler.cpp \
-    RequestsImpl.cpp \
-    ResponsesImpl.cpp \
-    ToJsonConverterImpl.cpp \
+    converter.cpp \
     main.cpp \
-    requester.cpp
+    requester.cpp \
+    requests.cpp \
+    responses.cpp \
+    rest_request.cpp \
+    session.cpp \
+    session_manager.cpp
 
 HEADERS += \
-    ConverterHandler.h \
-    FromJsonConverter.h \
-    RequestHandler.h \
-    Requests.h \
-    Responses.h \
-    RestRequest.h \
-    ToJsonConverter.h \
-    requester.h
+    converter.h \
+    converter_handler.h \
+    request_handler.h \
+    requester.h \
+    requests.h \
+    responses.h \
+    rest_request.h \
+    session.h \
+    session_manager.h
 
 FORMS +=
 

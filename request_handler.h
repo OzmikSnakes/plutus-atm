@@ -11,6 +11,6 @@ private:
 	template <class T>
 	QNetworkReply sendCustomRequest(QNetworkAccessManager, QNetworkRequest, QString, T);
 public:
-	template <class R, class C>
-	void sendRequest(RestRequest<R, C>);
+    // template <class R, class C>
+    // void sendRequest(RestRequest<R, C>);
 };
