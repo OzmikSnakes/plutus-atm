@@ -14,14 +14,15 @@ Requester::Requester(const RequesterConfiguration &config)
 {
     this->config = config;
     manager = new QNetworkAccessManager();
-    const ToJsonConvertableConverter converter;
+    const JsonConvertableConverter converter;
     converterHandler.addConverter(converter);
 }
 
 QNetworkRequest Requester::createRequest(const std::string &path)
 {
     QNetworkRequest request;
-    QString requestUrl = QString::fromStdString("https://%1:%2/%3/%4")
+	// todo move to configuration
+    QString requestUrl = QString::fromStdString("http://%1:%2/%3/%4")
             .arg(QString::fromStdString(config.host))
             .arg(QString(config.port))
             .arg(QString::fromStdString(config.apiPath))

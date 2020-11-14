@@ -2,7 +2,16 @@
 
 #include <QString>
 
+#include "converter.h"
+
 using std::string;
+
+class TokenInfo : public JsonSchemaAware
+{
+	QVariantMap toQVariantMap() const override;
+public:
+    std::string token;
+};
 
 class CreditTariffInfo
 {

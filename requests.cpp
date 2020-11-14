@@ -4,7 +4,7 @@
 
 // todo: think if public fields are cool
 // TODO: think about setter exceptions
-QVariantMap ToJsonConvertable::jsonSchema() const
+QVariantMap JsonSchemaAware::jsonSchema() const
 {
     return toQVariantMap();
 }
@@ -22,7 +22,7 @@ QVariantMap MakeTransferRequest::toQVariantMap() const
 QVariantMap ATMTokenRequest::toQVariantMap() const
 {
     QVariantMap map = QVariantMap();
-    map["accountId"] = QString::fromStdString(accountId);
+    map["accountNumber"] = QString::fromStdString(accountNumber);
     map["pin"] = QString::fromStdString(pin);
     return map;
 }
@@ -30,7 +30,7 @@ QVariantMap ATMTokenRequest::toQVariantMap() const
 QVariantMap ChangeBalanceRequest::toQVariantMap() const
 {
     QVariantMap map = QVariantMap();
-    map["accountId"] = QString::number(accountId);
+    map["accountNumber"] = QString::number(accountId);
     map["amount"] = amount;
     return map;
 }
