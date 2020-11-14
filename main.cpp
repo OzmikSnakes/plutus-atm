@@ -12,7 +12,7 @@ int main(int argc, char* argv[])
     config.apiPath = "api";
     config.host = "local";
     config.port = 8080;
-    config.sslConfig = QSslConfiguration::defaultConfiguration();
+    // config.sslConfig = QSslConfiguration::defaultConfiguration();
     // Requester requester = Requester(config);
     /*ConverterHandler converter_handler;
 	ATMTokenRequest token_request;
