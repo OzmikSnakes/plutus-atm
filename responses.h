@@ -6,7 +6,7 @@
 
 using std::string;
 
-class TokenInfo : public JsonSchemaAware
+class TokenInfo : public ToJsonConvertable
 {
 	QVariantMap toQVariantMap() const override;
 public:

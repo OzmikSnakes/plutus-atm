@@ -4,7 +4,7 @@
 
 // todo: think if public fields are cool
 // TODO: think about setter exceptions
-QVariantMap JsonSchemaAware::jsonSchema() const
+QVariantMap ToJsonConvertable::jsonSchema() const
 {
     return toQVariantMap();
 }

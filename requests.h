@@ -4,7 +4,7 @@
 #include <QString>
 #include "converter.h"
 
-class MakeTransferRequest final : public JsonSchemaAware
+class MakeTransferRequest final : public ToJsonConvertable
 {
 	QVariantMap toQVariantMap() const override;
 public:
@@ -15,7 +15,7 @@ public:
 };
 
 
-class ATMTokenRequest final : public JsonSchemaAware
+class ATMTokenRequest final : public ToJsonConvertable
 {
 	QVariantMap toQVariantMap() const override;
 public:
@@ -24,7 +24,7 @@ public:
 };
 
 
-class ChangeBalanceRequest final : public JsonSchemaAware
+class ChangeBalanceRequest final : public ToJsonConvertable
 {
 	QVariantMap toQVariantMap() const override;
 public:
@@ -32,7 +32,7 @@ public:
 	double amount;
 };
 
-class CreateAutomaticTransferRequest final : public JsonSchemaAware
+class CreateAutomaticTransferRequest final : public ToJsonConvertable
 {
 	QVariantMap toQVariantMap() const override;
 public:

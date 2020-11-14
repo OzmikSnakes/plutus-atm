@@ -18,16 +18,30 @@ public:
 };
 
 
-class JsonSchemaAware
+class ToJsonConvertable
 {
 	virtual QVariantMap toQVariantMap() const = 0;
 public:
 	QVariantMap jsonSchema() const;
-    virtual ~JsonSchemaAware() = default;
+    virtual ~ToJsonConvertable() = default;
 };
 
-class JsonConvertableConverter final : public ToJsonConverter<const JsonSchemaAware&>
+class FromJsonConvertable
+{
+	virtual void fillFromQVariantMap(QVariantMap) const = 0;
+public:
+	void fillFromSchema(QVariantMap) const;
+	virtual ~FromJsonConvertable() = default;
+};
+
+class ToJsonConvertableConverter final : public ToJsonConverter<const ToJsonConvertable&>
 {
 public:
-    QByteArray jsonRepresentation(const JsonSchemaAware&) const override;
+    QByteArray jsonRepresentation(const ToJsonConvertable&) const override;
 };
+//
+// class FromJsonConvertableConverter final : public FromJsonConverter<FromJsonConvertable>
+// {
+// public:
+// 	virtual FromJsonConvertable fromJson(QByteArray) override;
+// };

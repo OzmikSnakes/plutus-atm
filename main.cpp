@@ -9,9 +9,17 @@
 
 class CustomResponseHandler : public ResponseHandler<TokenInfo>
 {
-	void handle(const TokenInfo& response) override
+	void handle(const TokenInfo& response) const override
 	{
 		qDebug() << "Received token response with token: " << QString::fromStdString(response.token);
+	}
+};
+
+class ErrorResponseHandler : public ResponseHandler<ErrorInfo>
+{
+	void handle(const ErrorInfo& response) const override
+	{
+		qDebug() << "Error received with message " << response.message;
 	}
 };
 
@@ -21,11 +29,11 @@ int main(int argc, char* argv[])
 	config.apiPath = "api";
 	config.host = "localhost";
 	config.port = 8080;
-	// http://localhost:8080/api/
 	config.sslConfig = QSslConfiguration::defaultConfiguration();
 	Requester requester = Requester(config);
 	ATMTokenRequest request;
 	request.accountNumber = "1234123412341234";
 	request.pin = "1234";
-	// RestRequest<ATMTokenRequest, TokenInfo> rest_request(RequestType::POST, "auth/atm/token", request, CustomResponseHandler());
+	RestRequest<ATMTokenRequest, TokenInfo> rest_request(RequestType::POST, "auth/atm/token", request, CustomResponseHandler(), ErrorResponseHandler());
+	requester.sendRequest(rest_request);
 }
