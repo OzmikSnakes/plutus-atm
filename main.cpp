@@ -7,22 +7,6 @@
 #include "requester.h"
 #include "responses.h"
 
-class CustomResponseHandler : public ResponseHandler<TokenInfo>
-{
-	void handle(const TokenInfo& response) const override
-	{
-		qDebug() << "Received token response with token: " << QString::fromStdString(response.token);
-	}
-};
-
-class ErrorResponseHandler : public ResponseHandler<ErrorInfo>
-{
-	void handle(const ErrorInfo& response) const override
-	{
-		qDebug() << "Error received with message " << response.message;
-	}
-};
-
 int main(int argc, char* argv[])
 {
 	QApplication a(argc, argv);
@@ -35,8 +19,22 @@ int main(int argc, char* argv[])
 	ATMTokenRequest request;
 	request.accountNumber = "4532280486346619";
 	request.pin = "1234";
-	RestRequest<ATMTokenRequest, TokenInfo> rest_request(RequestType::POST, "auth/atm/token", request, CustomResponseHandler(),
-	                                                     ErrorResponseHandler());
+	const FunctionResponseHandler<TokenInfo> successHandler{
+		[](const TokenInfo& response)
+		{
+			qInfo() << "Successfully acquired token " << response.token;
+		}
+	};
+
+	const FunctionResponseHandler<ErrorInfo> errorHandler{
+		[](const ErrorInfo& response)
+		{
+			qInfo() << "Error occurred with message: " << response.message;
+		}
+	};
+
+
+	RestRequest<ATMTokenRequest, TokenInfo, ErrorInfo> rest_request(RequestMethod::POST, "auth/atm/token", request, successHandler, errorHandler);
 	requester.sendRequest(rest_request);
 	return a.exec();
 }

@@ -1,32 +1,17 @@
 #pragma once
 #include "converter.h"
+#include "response_handler.h"
 
-enum RequestType { GET, POST, PUT, DELETE, PATCH };
+enum RequestMethod { GET, POST, PUT, DELETE, PATCH };
 
-template <class T>
-class ResponseHandler
-{
-	virtual void handle(const T& response) const = 0;
-public:
-	void operator()(const T& response) const;
-	virtual ~ResponseHandler() = default;
-};
-
-class ErrorInfo : public ToJsonConvertable
-{
-	QVariantMap toQVariantMap() const override;
-public:
-	QString message;
-};
-
-template <class R, class C>
+// todo do with builder pattern
+template <class RequestType, class ResponseType, class ErrorType>
 class RestRequest
 {
 public:
-	// todo do with builder pattern
-	RestRequest(RequestType type, const std::string& path, const R& request_object, const ResponseHandler<C>& success_handler,
-	            const ResponseHandler<ErrorInfo>& error_handler)
-		: type_(type),
+	RestRequest(RequestMethod method, const std::string& path, const RequestType& request_object, const AbstractResponseHandler<ResponseType>& success_handler,
+	            const AbstractResponseHandler<ErrorType>& error_handler)
+		: method_(method),
 		  path_(path),
 		  request_object_(request_object),
 		  success_handler_(success_handler),
@@ -34,53 +19,47 @@ public:
 	{
 	}
 
-	const RequestType& type() const;
+	const RequestMethod& method() const;
 	const std::string& path() const;
-	const R& request_object() const;
+	const RequestType& request_object() const;
 
-	const ResponseHandler<C>& success_handler() const;
-	const ResponseHandler<ErrorInfo>& error_handler() const;
+	const AbstractResponseHandler<ResponseType>& success_handler() const;
+	const AbstractResponseHandler<ErrorType>& error_handler() const;
 
 private:
-	RequestType type_;
+	RequestMethod method_;
 	std::string path_;
-	R request_object_;
-	const ResponseHandler<C>& success_handler_;
-	const ResponseHandler<ErrorInfo>& error_handler_;
+	RequestType request_object_;
+	const AbstractResponseHandler<ResponseType>& success_handler_;
+	const AbstractResponseHandler<ErrorType>& error_handler_;
 };
 
-template <class R, class C>
-const R& RestRequest<R, C>::request_object() const
+template <class RequestType, class ResponseType, class ErrorType>
+const RequestType& RestRequest<RequestType, ResponseType, ErrorType>::request_object() const
 {
 	return request_object_;
 }
 
-template <class R, class C>
-const RequestType& RestRequest<R, C>::type() const
+template <class RequestType, class ResponseType, class ErrorType>
+const RequestMethod& RestRequest<RequestType, ResponseType, ErrorType>::method() const
 {
-	return type_;
+	return method_;
 }
 
-template <class R, class C>
-const std::string& RestRequest<R, C>::path() const
+template <class RequestType, class ResponseType, class ErrorType>
+const std::string& RestRequest<RequestType, ResponseType, ErrorType>::path() const
 {
 	return path_;
 }
 
-template <class T>
-void ResponseHandler<T>::operator()(const T& response) const
-{
-	handle(response);
-}
-
-template <class R, class C>
-const ResponseHandler<C>& RestRequest<R, C>::success_handler() const
+template <class RequestType, class ResponseType, class ErrorType>
+const AbstractResponseHandler<ResponseType>& RestRequest<RequestType, ResponseType, ErrorType>::success_handler() const
 {
 	return success_handler_;
 }
 
-template <class R, class C>
-const ResponseHandler<ErrorInfo>& RestRequest<R, C>::error_handler() const
+template <class RequestType, class ResponseType, class ErrorType>
+const AbstractResponseHandler<ErrorType>& RestRequest<RequestType, ResponseType, ErrorType>::error_handler() const
 {
 	return error_handler_;
 }

@@ -27,56 +27,51 @@ class Requester : public QObject
 Q_OBJECT
 public:
 	explicit Requester(const RequesterConfiguration&);
-	template <class R, class C>
-	void sendRequest(const RestRequest<R, C>&);
+	template <class RequestType, class ResponseType, class ErrorType>
+	void sendRequest(const RestRequest<RequestType, ResponseType, ErrorType>&);
+	const QNetworkAccessManager& network_access_manager() const;
 private:
 	QNetworkAccessManager manager{this};
-	RequesterConfiguration config;
-	ConverterHandler converterHandler;
+	RequesterConfiguration endpoint_configuration;
+	ConverterHandler converter_handler;
 
-	void fillResponseObjectFromReply(QNetworkReply*, FromJsonFillable&);
-	bool onFinishRequest(QNetworkReply*);
-	QNetworkReply* sendCustomRequest(const QNetworkRequest&, const QString&, const QByteArray&);
 	QNetworkRequest createRequest(const std::string&);
+	static void fillResponseObjectFromReply(QNetworkReply&, FromJsonFillable&);
+	static bool isErrorReply(const QNetworkReply&);
 };
 
-template <class R, class C>
-void Requester::sendRequest(const RestRequest<R, C>& restRequest)
+template <class RequestType, class ResponseType, class ErrorType>
+void Requester::sendRequest(const RestRequest<RequestType, ResponseType, ErrorType>& restRequest)
 {
-	QByteArray dataByteArray = converterHandler.toJson<const ToJsonConvertable&>(restRequest.request_object());
+	QByteArray dataByteArray = converter_handler.toJson<const ToJsonConvertable&>(restRequest.request_object());
 	QNetworkRequest request = createRequest(restRequest.path());
 	QNetworkReply* reply;
-	switch (restRequest.type())
+	switch (restRequest.method())
 	{
-	case RequestType::POST:
+	case RequestMethod::POST:
+		reply = manager.post(request, dataByteArray);
+		break;
+
+	case RequestMethod::PUT:
+		reply = manager.put(request, dataByteArray);
+		break;
+
+	case RequestMethod::GET:
+		reply = manager.get(request);
+		break;
+
+	case RequestMethod::DELETE:
+		if (dataByteArray == nullptr)
 		{
-			reply = manager.post(request, dataByteArray);
-			break;
+			reply = manager.deleteResource(request);
 		}
-	case RequestType::PUT:
+		else
 		{
-			reply = manager.put(request, dataByteArray);
-			break;
+			// todo throw exception
 		}
-	case RequestType::GET:
-		{
-			reply = manager.get(request);
-			break;
-		}
-	case RequestType::DELETE:
-		{
-			if (dataByteArray == nullptr)
-				reply = manager.deleteResource(request);
-			else
-				reply = sendCustomRequest(request, "DELETE", dataByteArray);
-			break;
-		}
-	case RequestType::PATCH:
-		{
-			reply = sendCustomRequest(request, "PATCH", dataByteArray);
-			break;
-		}
+
 	default:
+		// todo throw exception
 		reply = nullptr;
 		Q_ASSERT(false);
 	}
@@ -84,34 +79,20 @@ void Requester::sendRequest(const RestRequest<R, C>& restRequest)
 	connect(reply, &QNetworkReply::finished, this,
 	        [this, reply, restRequest]()
 	        {
-				C responseObject;
-		        if (onFinishRequest(reply))
+		        if (isErrorReply(*reply))
 		        {
-					fillResponseObjectFromReply(reply, responseObject);
-					restRequest.success_handler()(responseObject);
+			        ResponseType responseObject;
+			        fillResponseObjectFromReply(*reply, responseObject);
+			        restRequest.success_handler()(responseObject);
 		        }
 		        else
 		        {
-		        	//todo error handling
+			        ErrorType error_object;
+			        fillResponseObjectFromReply(*reply, error_object);
+			        restRequest.error_handler()(error_object);
 		        }
 		        reply->close();
 		        reply->deleteLater();
+				delete reply;
 	        });
 }
-
-/*class Requester : public QObject
-{
-Q_OBJECT
-public:
-
-	bool onFinishRequest(QNetworkReply* reply);
-
-	void handleQtNetworkErrors(QNetworkReply* reply, QJsonObject& obj);
-	QNetworkAccessManager* manager;
-
-signals:
-	void networkError();
-
-
-public slots:
-};*/

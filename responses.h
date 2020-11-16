@@ -4,11 +4,21 @@
 
 using std::string;
 
+class ErrorInfo : public FromJsonFillable
+{
+    void fill(const QJsonObject&) override;
+public:
+	// todo make normal http status
+    size_t status;
+    QString error;
+    QString message;
+};
+
 class TokenInfo : public FromJsonFillable
 {
 	void fill(const QJsonObject&) override;
 public:
-    std::string token;
+    QString token;
 };
 
 class CreditTariffInfo
@@ -19,8 +29,6 @@ public:
     double limit;
     long createdWhen;
 };
-
-
 
 class ClientInfo
 {

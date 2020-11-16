@@ -9,14 +9,19 @@ RequesterConfiguration& RequesterConfiguration::operator=(const RequesterConfigu
 	host = config.host;
 	port = config.port;
 	apiPath = config.apiPath;
-	//sslConfig = QSslConfiguration::defaultConfiguration();//config.sslConfig;
+	//sslConfig = QSslConfiguration::defaultConfiguration();//endpoint_configuration.sslConfig;
 	return *this;
 }
 
 Requester::Requester(const RequesterConfiguration& to_copy)
 {
-	config = to_copy;
-	converterHandler.addConverter<const ToJsonConvertable&>(*new ToJsonConvertableConverter());
+	endpoint_configuration = to_copy;
+	converter_handler.addConverter<const ToJsonConvertable&>(*new ToJsonConvertableConverter());
+}
+
+const QNetworkAccessManager& Requester::network_access_manager() const
+{
+	return manager;
 }
 
 QNetworkRequest Requester::createRequest(const std::string& path)
@@ -24,59 +29,47 @@ QNetworkRequest Requester::createRequest(const std::string& path)
 	QNetworkRequest request;
 	// todo move to configuration
 	QString requestUrl = QString::fromStdString("http://%1:%2/%3/%4")
-	                     .arg(QString::fromStdString(config.host))
-	                     .arg(QString::fromStdString(std::to_string(config.port)))
-	                     .arg(QString::fromStdString(config.apiPath))
+	                     .arg(QString::fromStdString(endpoint_configuration.host))
+	                     .arg(QString::fromStdString(std::to_string(endpoint_configuration.port)))
+	                     .arg(QString::fromStdString(endpoint_configuration.apiPath))
 	                     .arg(QString::fromStdString(path));
 	request.setUrl(QUrl(requestUrl));
 	request.setRawHeader("Content-Type", "application/json");
 	QString token = QString::fromStdString(SessionManager::getInstance()->getCurrentSession().getToken());
 	request.setRawHeader("Authorization", QString("Bearer %1").arg(token).toUtf8());
-	request.setSslConfiguration(config.sslConfig);
+	request.setSslConfiguration(endpoint_configuration.sslConfig);
 	return request;
 }
 
-bool Requester::onFinishRequest(QNetworkReply* reply)
+bool Requester::isErrorReply(const QNetworkReply& reply)
 {
-	QNetworkReply::NetworkError replyError = reply->error();
+	QNetworkReply::NetworkError replyError = reply.error();
 	if (replyError == QNetworkReply::NoError)
 	{
-		int errorCode = reply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+		const int errorCode = reply.attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
 		if ((errorCode >= 200) && (errorCode < 300))
 			return true;
 	}
 	return false;
 }
 
-QNetworkReply* Requester::sendCustomRequest(const QNetworkRequest& request, const QString& type, const QByteArray& dataByteArray)
-{
-	// request.setRawHeader("HTTP", type);
-	QBuffer* buff = new QBuffer;
-	buff->setData(dataByteArray);
-	// maybe ReadWrite
-	buff->open((QBuffer::ReadOnly));
-	QNetworkReply* reply;
-	reply = manager.sendCustomRequest(request, type.toUtf8(), buff);
-	buff->setParent(reply);
-	return reply;
-}
-
 // todo make converter
-void Requester::fillResponseObjectFromReply(QNetworkReply* reply, FromJsonFillable& to_fill)
+void Requester::fillResponseObjectFromReply(QNetworkReply& reply, FromJsonFillable& to_fill)
 {
-    QJsonParseError parseError;
-    const QByteArray replyDataByteArray{ reply->readAll() };
-    const QJsonDocument jsonDoc{ QJsonDocument::fromJson(replyDataByteArray, &parseError) };
-    if (parseError.error != QJsonParseError::NoError)
-    {
-        //todo throw exception
-        qDebug() << replyDataByteArray;
-        qWarning() << "Json parse error: " << parseError.errorString();
-    }
-    else
-    {
-        to_fill.fillFromJson(jsonDoc.object());
-    }
+	QJsonParseError* parseError{nullptr};
+	const QByteArray replyDataByteArray{reply.readAll()};
+	const QJsonDocument jsonDoc{QJsonDocument::fromJson(replyDataByteArray, parseError)};
+	if (parseError && parseError->error != QJsonParseError::NoError)
+	{
+		//todo throw exception
+		qDebug() << replyDataByteArray;
+		qWarning() << "Json parse error: " << parseError->errorString();
+	}
+	else
+	{
+		to_fill.fillFromJson(jsonDoc.object());
+	}
+    delete parseError;
 }
 
 /*const QString Requester::httpTemplate = "http://%1:%2/api/%3";
@@ -103,13 +96,13 @@ void Requester::initRequester(const QString &host, int port, QSslConfiguration *
 void Requester::sendRequest(const QString &apiStr,
                             const handleFunc &funcSuccess,
                             const handleFunc &funcError,
-                            Requester::Type type,
+                            Requester::Type method,
                             const QVariantMap &data)
 {
     QNetworkRequest request = createRequest(apiStr);
 
     QNetworkReply *reply;
-    switch (type) {
+    switch (method) {
     case Type::POST: {
         QByteArray postDataByteArray = variantMapToJson(data);
         reply = manager->post(request, postDataByteArray);
@@ -135,7 +128,7 @@ void Requester::sendRequest(const QString &apiStr,
             [this, funcSuccess, funcError, reply]() {
         QJsonObject obj = fillResponseObjectFromReply(reply);
 
-        if (onFinishRequest(reply)) {
+        if (isErrorReply(reply)) {
             if (funcSuccess != nullptr)
                 funcSuccess(obj);
         } else {
@@ -166,16 +159,16 @@ QNetworkRequest Requester::createRequest(const QString &apiStr)
 
 QNetworkReply* Requester::sendCustomRequest(QNetworkAccessManager* manager,
                                             QNetworkRequest &request,
-                                            const QString &type,
+                                            const QString &method,
                                             const QVariantMap &data)
 {
 	// todo doesn't compile
-    // request.setRawHeader("HTTP", type.toUtf8());
+    // request.setRawHeader("HTTP", method.toUtf8());
     // QByteArray postDataByteArray = variantMapToJson(data);
     // QByteBuffer *buff = new QByteBuffer;
     // buff->setData(postDataByteArray);
     // buff->open(QIODevice::ReadOnly);
-    // QNetworkReply* reply =  manager->sendCustomRequest(request, type.toUtf8(), buff);
+    // QNetworkReply* reply =  manager->sendCustomRequest(request, method.toUtf8(), buff);
     // buff->setParent(reply);
     // return reply;
 }
@@ -200,7 +193,7 @@ QJsonObject Requester::fillResponseObjectFromReply(QNetworkReply *reply)
     // return jsonObj;
 }
 
-bool Requester::onFinishRequest(QNetworkReply *reply)
+bool Requester::isErrorReply(QNetworkReply *reply)
 {
     auto replyError = reply->error();
     if (replyError == QNetworkReply::NoError ) {
