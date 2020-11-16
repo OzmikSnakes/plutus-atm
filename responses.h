@@ -1,14 +1,12 @@
 #pragma once
-
-#include <QString>
-
+#include <QJsonObject>
 #include "converter.h"
 
 using std::string;
 
-class TokenInfo : public ToJsonConvertable
+class TokenInfo : public FromJsonFillable
 {
-	QVariantMap toQVariantMap() const override;
+	void fill(const QJsonObject&) override;
 public:
     std::string token;
 };

@@ -1,8 +1,6 @@
 #include "responses.h"
 
-QVariantMap TokenInfo::toQVariantMap() const
+void TokenInfo::fill(const QJsonObject& json)
 {
-	QVariantMap schema;
-	schema["token"] = QString::fromStdString(token);
-	return schema;
+	token = json["jwtToken"].toString().toStdString();
 }

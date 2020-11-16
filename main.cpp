@@ -33,7 +33,7 @@ int main(int argc, char* argv[])
 	config.sslConfig = QSslConfiguration::defaultConfiguration();
 	Requester requester{config};
 	ATMTokenRequest request;
-	request.accountNumber = "1234123412341234";
+	request.accountNumber = "4532280486346619";
 	request.pin = "1234";
 	RestRequest<ATMTokenRequest, TokenInfo> rest_request(RequestType::POST, "auth/atm/token", request, CustomResponseHandler(),
 	                                                     ErrorResponseHandler());

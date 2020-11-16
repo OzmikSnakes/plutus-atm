@@ -34,8 +34,7 @@ private:
 	RequesterConfiguration config;
 	ConverterHandler converterHandler;
 
-	template <class C>
-	C parseReply(QNetworkReply*);
+	void fillResponseObjectFromReply(QNetworkReply*, FromJsonFillable&);
 	bool onFinishRequest(QNetworkReply*);
 	QNetworkReply* sendCustomRequest(const QNetworkRequest&, const QString&, const QByteArray&);
 	QNetworkRequest createRequest(const std::string&);
@@ -82,54 +81,23 @@ void Requester::sendRequest(const RestRequest<R, C>& restRequest)
 		Q_ASSERT(false);
 	}
 
-	std::function<void(const QJsonObject&)> success_handler = [](const QJsonObject& o)
-	{
-	};
-	std::function<void(const QJsonObject&)> error_handler = [](const QJsonObject& o)
-	{
-	};
-
 	connect(reply, &QNetworkReply::finished, this,
-	        [this, success_handler, error_handler, reply]()
+	        [this, reply, restRequest]()
 	        {
-		        // C responseObject = parseReply<C>(reply);
+				C responseObject;
 		        if (onFinishRequest(reply))
 		        {
-			        qInfo() << "kek1";
+					fillResponseObjectFromReply(reply, responseObject);
+					restRequest.success_handler()(responseObject);
 		        }
 		        else
 		        {
-			        qInfo() << "kek2";
+		        	//todo error handling
 		        }
 		        reply->close();
 		        reply->deleteLater();
 	        });
 }
-
-// todo make converter
-template <class C>
-C Requester::parseReply(QNetworkReply* reply)
-{
-	C responseObject;
-	QJsonDocument jsonDoc;
-	QJsonParseError parseError;
-	QByteArray replyDataByteArray = reply->readAll();
-	jsonDoc = QJsonDocument::fromJson(replyDataByteArray, &parseError);
-
-	// from json converter
-
-	/*if (parseError.error != QJsonParseError::NoError) {
-	    qDebug() << replyDataByteArray;
-	    qWarning() << "Json parse error: " << parseError.errorString();
-	} else {
-	    if (jsonDoc.isObject())
-	        jsonObj = jsonDoc.object();
-	    else if (jsonDoc.isArray())
-	        jsonObj["non_field_errors"] = jsonDoc.array();
-	}*/
-	return responseObject;
-}
-
 
 /*class Requester : public QObject
 {

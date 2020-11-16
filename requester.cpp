@@ -61,6 +61,24 @@ QNetworkReply* Requester::sendCustomRequest(const QNetworkRequest& request, cons
 	return reply;
 }
 
+// todo make converter
+void Requester::fillResponseObjectFromReply(QNetworkReply* reply, FromJsonFillable& to_fill)
+{
+    QJsonParseError parseError;
+    const QByteArray replyDataByteArray{ reply->readAll() };
+    const QJsonDocument jsonDoc{ QJsonDocument::fromJson(replyDataByteArray, &parseError) };
+    if (parseError.error != QJsonParseError::NoError)
+    {
+        //todo throw exception
+        qDebug() << replyDataByteArray;
+        qWarning() << "Json parse error: " << parseError.errorString();
+    }
+    else
+    {
+        to_fill.fillFromJson(jsonDoc.object());
+    }
+}
+
 /*const QString Requester::httpTemplate = "http://%1:%2/api/%3";
 const QString Requester::httpsTemplate = "https://%1:%2/api/%3";
 const QString Requester::KEY_QNETWORK_REPLY_ERROR = "QNetworkReplyError";
@@ -115,7 +133,7 @@ void Requester::sendRequest(const QString &apiStr,
 
     connect(reply, &QNetworkReply::finished, this,
             [this, funcSuccess, funcError, reply]() {
-        QJsonObject obj = parseReply(reply);
+        QJsonObject obj = fillResponseObjectFromReply(reply);
 
         if (onFinishRequest(reply)) {
             if (funcSuccess != nullptr)
@@ -162,7 +180,7 @@ QNetworkReply* Requester::sendCustomRequest(QNetworkAccessManager* manager,
     // return reply;
 }
 
-QJsonObject Requester::parseReply(QNetworkReply *reply)
+QJsonObject Requester::fillResponseObjectFromReply(QNetworkReply *reply)
 {
 	// todo doesn't compile
     // QJsonObject jsonObj;
