@@ -16,7 +16,6 @@ RequesterConfiguration& RequesterConfiguration::operator=(const RequesterConfigu
 Requester::Requester(const RequesterConfiguration& to_copy)
 {
 	config = to_copy;
-	manager = new QNetworkAccessManager();
 	converterHandler.addConverter<const ToJsonConvertable&>(*new ToJsonConvertableConverter());
 }
 
@@ -26,7 +25,7 @@ QNetworkRequest Requester::createRequest(const std::string& path)
 	// todo move to configuration
 	QString requestUrl = QString::fromStdString("http://%1:%2/%3/%4")
 	                     .arg(QString::fromStdString(config.host))
-	                     .arg(QString(config.port))
+	                     .arg(QString::fromStdString(std::to_string(config.port)))
 	                     .arg(QString::fromStdString(config.apiPath))
 	                     .arg(QString::fromStdString(path));
 	request.setUrl(QUrl(requestUrl));
@@ -57,7 +56,7 @@ QNetworkReply* Requester::sendCustomRequest(const QNetworkRequest& request, cons
 	// maybe ReadWrite
 	buff->open((QBuffer::ReadOnly));
 	QNetworkReply* reply;
-	reply = manager->sendCustomRequest(request, type.toUtf8(), buff);
+	reply = manager.sendCustomRequest(request, type.toUtf8(), buff);
 	buff->setParent(reply);
 	return reply;
 }

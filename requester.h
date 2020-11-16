@@ -22,14 +22,15 @@ public:
 	RequesterConfiguration& operator=(const RequesterConfiguration&);
 };
 
-class Requester
+class Requester : public QObject
 {
+Q_OBJECT
 public:
 	explicit Requester(const RequesterConfiguration&);
 	template <class R, class C>
 	void sendRequest(const RestRequest<R, C>&);
 private:
-	QNetworkAccessManager* manager;
+	QNetworkAccessManager manager{this};
 	RequesterConfiguration config;
 	ConverterHandler converterHandler;
 
@@ -50,23 +51,23 @@ void Requester::sendRequest(const RestRequest<R, C>& restRequest)
 	{
 	case RequestType::POST:
 		{
-			reply = manager->post(request, dataByteArray);
+			reply = manager.post(request, dataByteArray);
 			break;
 		}
 	case RequestType::PUT:
 		{
-			reply = manager->put(request, dataByteArray);
+			reply = manager.put(request, dataByteArray);
 			break;
 		}
 	case RequestType::GET:
 		{
-			reply = manager->get(request);
+			reply = manager.get(request);
 			break;
 		}
 	case RequestType::DELETE:
 		{
 			if (dataByteArray == nullptr)
-				reply = manager->deleteResource(request);
+				reply = manager.deleteResource(request);
 			else
 				reply = sendCustomRequest(request, "DELETE", dataByteArray);
 			break;
@@ -81,24 +82,28 @@ void Requester::sendRequest(const RestRequest<R, C>& restRequest)
 		Q_ASSERT(false);
 	}
 
-	std::function<void(const QJsonObject&)> success_handler = [](const QJsonObject& o) {};
-	std::function<void(const QJsonObject&)> error_handler = [](const QJsonObject& o) {};
+	std::function<void(const QJsonObject&)> success_handler = [](const QJsonObject& o)
+	{
+	};
+	std::function<void(const QJsonObject&)> error_handler = [](const QJsonObject& o)
+	{
+	};
 
-	// QObject::connect(reply, &QNetworkReply::finished, this, [this, success_handler, error_handler, reply]()
-	// {
-		// C responseObject = parseReply<C>(reply);
-		// if (onFinishRequest(reply))
-		// {
-		// 	restRequest.success_handler()(responseObject);
-		// }
-		// else
-		// {
-		// 	//todo error
-		// 	// restRequest.error_handler()(responseObject);
-		// }
-		// reply->close();
-		// reply->deleteLater();
-	// });
+	connect(reply, &QNetworkReply::finished, this,
+	        [this, success_handler, error_handler, reply]()
+	        {
+		        // C responseObject = parseReply<C>(reply);
+		        if (onFinishRequest(reply))
+		        {
+			        qInfo() << "kek1";
+		        }
+		        else
+		        {
+			        qInfo() << "kek2";
+		        }
+		        reply->close();
+		        reply->deleteLater();
+	        });
 }
 
 // todo make converter

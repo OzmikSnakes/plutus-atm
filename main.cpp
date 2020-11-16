@@ -25,15 +25,18 @@ class ErrorResponseHandler : public ResponseHandler<ErrorInfo>
 
 int main(int argc, char* argv[])
 {
+	QApplication a(argc, argv);
 	RequesterConfiguration config = RequesterConfiguration();
 	config.apiPath = "api";
 	config.host = "localhost";
 	config.port = 8080;
 	config.sslConfig = QSslConfiguration::defaultConfiguration();
-	Requester requester = Requester(config);
+	Requester requester{config};
 	ATMTokenRequest request;
 	request.accountNumber = "1234123412341234";
 	request.pin = "1234";
-	RestRequest<ATMTokenRequest, TokenInfo> rest_request(RequestType::POST, "auth/atm/token", request, CustomResponseHandler(), ErrorResponseHandler());
+	RestRequest<ATMTokenRequest, TokenInfo> rest_request(RequestType::POST, "auth/atm/token", request, CustomResponseHandler(),
+	                                                     ErrorResponseHandler());
 	requester.sendRequest(rest_request);
+	return a.exec();
 }
