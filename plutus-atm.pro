@@ -3,7 +3,7 @@ QT       += core gui \
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++17
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -16,19 +16,17 @@ SOURCES += \
     requests.cpp \
     responses.cpp \
     rest_request.cpp \
-    session.cpp \
     session_manager.cpp
 
 HEADERS += \
     converter.h \
     converter_handler.h \
-    request_handler.h \
     requester.h \
     requests.h \
     responses.h \
     rest_request.h \
-    session.h \
-    session_manager.h
+    session_manager.h \
+	response_handler.h
 
 FORMS +=
 

@@ -9,18 +9,18 @@ public:
 	virtual ~ToJsonConverter() = default;
 };
 
-class ToJsonConvertable
+class JsonSchemaAware
 {
 	virtual QVariantMap toQVariantMap() const = 0;
 public:
 	QVariantMap jsonSchema() const;
-	virtual ~ToJsonConvertable() = default;
+	virtual ~JsonSchemaAware() = default;
 };
 
-class ToJsonConvertableConverter final : public ToJsonConverter<const ToJsonConvertable&>
+class JsonSchemaAwareConverter final : public ToJsonConverter<const JsonSchemaAware&>
 {
 public:
-	QByteArray jsonRepresentation(const ToJsonConvertable&) const override;
+	QByteArray jsonRepresentation(const JsonSchemaAware&) const override;
 };
 
 class FromJsonFillable

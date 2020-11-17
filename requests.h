@@ -1,10 +1,8 @@
-#ifndef REQUESTS_H
-#define REQUESTS_H
-
+#pragma once
 #include <QString>
 #include "converter.h"
 
-class MakeTransferRequest final : public ToJsonConvertable
+class MakeTransferRequest final : public JsonSchemaAware
 {
 	QVariantMap toQVariantMap() const override;
 public:
@@ -15,7 +13,7 @@ public:
 };
 
 
-class ATMTokenRequest final : public ToJsonConvertable
+class ATMTokenRequest final : public JsonSchemaAware
 {
 	QVariantMap toQVariantMap() const override;
 public:
@@ -24,7 +22,7 @@ public:
 };
 
 
-class ChangeBalanceRequest final : public ToJsonConvertable
+class ChangeBalanceRequest final : public JsonSchemaAware
 {
 	QVariantMap toQVariantMap() const override;
 public:
@@ -32,7 +30,7 @@ public:
 	double amount;
 };
 
-class CreateAutomaticTransferRequest final : public ToJsonConvertable
+class CreateAutomaticTransferRequest final : public JsonSchemaAware
 {
 	QVariantMap toQVariantMap() const override;
 public:
@@ -45,5 +43,3 @@ public:
 	double toPayAmount;
     std::string description;
 };
-
-#endif

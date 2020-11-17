@@ -1,4 +1,7 @@
 #pragma once
+#include "responses.h"
+#include "session_manager.h"
+
 template <class T>
 class AbstractResponseHandler
 {
@@ -12,10 +15,19 @@ template<class T>
 class FunctionResponseHandler : public AbstractResponseHandler<T>
 {
 	std::function<void(const T&)> handler_;
-
+protected:
 	void handle(const T& response) const override;
 public:
 	explicit FunctionResponseHandler(const std::function<void(const T&)>&);
+
+};
+
+class AuthorizationResponseHandler : public FunctionResponseHandler<TokenInfo>
+{
+	AbstractSessionManager<Session>& session_manager_;
+	void handle(const TokenInfo& response) const override;
+public:
+	explicit AuthorizationResponseHandler(AbstractSessionManager<Session>&,const std::function<void(const TokenInfo&)>&);
 
 };
 

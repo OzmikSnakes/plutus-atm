@@ -1,19 +1,48 @@
-#ifndef SESSION_MANAGER_H
-#define SESSION_MANAGER_H
+#pragma once
+#include <string>
+#include <optional>
 
-#include "session.h"
-
-class SessionManager
+template <class T>
+class AbstractSessionManager
 {
+	[[nodiscard]] virtual std::optional<T> get_current_session() const = 0;
+	virtual void set_current_session(const T&) = 0;
 public:
-    static SessionManager* getInstance();
-    Session getCurrentSession() const;
-private:
-    Session session;
-    static SessionManager* instance;
-    SessionManager() {};
-    SessionManager(SessionManager const&) {};
-    SessionManager& operator=(SessionManager const&) {};
+	[[nodiscard]] std::optional<T> current_session() const;
+	void current_session(const T&);
+	virtual ~AbstractSessionManager() = default;
 };
 
-#endif // SESSION_MANAGER_H
+template <class T>
+std::optional<T> AbstractSessionManager<T>::current_session() const
+{
+	return get_current_session();
+}
+
+template <class T>
+void AbstractSessionManager<T>::current_session(const T& session)
+{
+	return set_current_session(session);
+}
+
+struct Session
+{
+	std::string jwt_token;
+	std::string csrf_token;
+	Session(std::string, std::string);
+	Session(const Session&) = default;
+};
+
+class SessionManager : public AbstractSessionManager<Session>
+{
+public:
+	static SessionManager& getInstance();
+	SessionManager(const SessionManager&) = delete;
+private:
+	Session* cur_session_{nullptr};
+	static SessionManager* INSTANCE_;
+
+	void set_current_session(const Session&) override;
+	[[nodiscard]] std::optional<Session> get_current_session() const override;
+	SessionManager() = default;
+};

@@ -2,73 +2,83 @@
 
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
-#include <QJsonObject>
 #include <QJsonDocument>
-#include <functional>
+#include <QJsonObject>
 #include <QVariantMap>
 
 #include "rest_request.h"
 #include "converter_handler.h"
 #include "converter.h"
+#include "session_manager.h"
 
-class RequesterConfiguration
+struct RestConfiguration
 {
-public:
+	bool secured;
 	int port;
 	std::string host;
-	std::string apiPath;
-	QSslConfiguration sslConfig;
+	std::string api_path;
+	QSslConfiguration ssl_config;
 
-	RequesterConfiguration& operator=(const RequesterConfiguration&);
+	RestConfiguration(bool secured_, int port_, std::string host_, std::string api_path_, const QSslConfiguration& ssl_config_);
+	QUrl root_url() const;
 };
 
+#ifdef Q_OBJECT
 class Requester : public QObject
 {
 Q_OBJECT
 public:
-	explicit Requester(const RequesterConfiguration&);
+	explicit Requester(const RestConfiguration&, AbstractSessionManager<Session>&);
 	template <class RequestType, class ResponseType, class ErrorType>
 	void sendRequest(const RestRequest<RequestType, ResponseType, ErrorType>&);
-	const QNetworkAccessManager& network_access_manager() const;
+	[[nodiscard]] const QNetworkAccessManager& network_access_manager() const;
 private:
-	QNetworkAccessManager manager{this};
-	RequesterConfiguration endpoint_configuration;
-	ConverterHandler converter_handler;
+	QNetworkAccessManager network_manager_{this};
+	RestConfiguration rest_configuration_;
+	ConverterHandler converter_handler_;
+	// todo make requester templated
+	AbstractSessionManager<Session>& session_manager_;
 
+	//methods
 	QNetworkRequest createRequest(const std::string&);
-	static void fillResponseObjectFromReply(QNetworkReply&, FromJsonFillable&);
+	static void processReply(QNetworkReply&, FromJsonFillable&);
 	static bool isErrorReply(const QNetworkReply&);
+
+	static const char* const AUTHORIZATION_HEADER_NAME;
+	static const char* const CSRF_HEADER_NAME;
 };
 
 template <class RequestType, class ResponseType, class ErrorType>
 void Requester::sendRequest(const RestRequest<RequestType, ResponseType, ErrorType>& restRequest)
 {
-	QByteArray dataByteArray = converter_handler.toJson<const ToJsonConvertable&>(restRequest.request_object());
-	QNetworkRequest request = createRequest(restRequest.path());
-	QNetworkReply* reply;
+	const QByteArray dataByteArray{converter_handler_.toJson<const JsonSchemaAware&>(restRequest.request_object())};
+	const QNetworkRequest request{createRequest(restRequest.path())};
+	QNetworkReply* reply{nullptr};
+	//todo optimize desision making
 	switch (restRequest.method())
 	{
 	case RequestMethod::POST:
-		reply = manager.post(request, dataByteArray);
+		reply = network_manager_.post(request, dataByteArray);
 		break;
 
 	case RequestMethod::PUT:
-		reply = manager.put(request, dataByteArray);
+		reply = network_manager_.put(request, dataByteArray);
 		break;
 
 	case RequestMethod::GET:
-		reply = manager.get(request);
+		reply = network_manager_.get(request);
 		break;
 
 	case RequestMethod::DELETE:
 		if (dataByteArray == nullptr)
 		{
-			reply = manager.deleteResource(request);
+			reply = network_manager_.deleteResource(request);
 		}
 		else
 		{
 			// todo throw exception
 		}
+		break;
 
 	default:
 		// todo throw exception
@@ -82,17 +92,18 @@ void Requester::sendRequest(const RestRequest<RequestType, ResponseType, ErrorTy
 		        if (isErrorReply(*reply))
 		        {
 			        ResponseType responseObject;
-			        fillResponseObjectFromReply(*reply, responseObject);
+			        processReply(*reply, responseObject);
 			        restRequest.success_handler()(responseObject);
 		        }
 		        else
 		        {
 			        ErrorType error_object;
-			        fillResponseObjectFromReply(*reply, error_object);
+			        processReply(*reply, error_object);
 			        restRequest.error_handler()(error_object);
 		        }
 		        reply->close();
 		        reply->deleteLater();
-				delete reply;
+		        delete reply;
 	        });
 }
+#endif
