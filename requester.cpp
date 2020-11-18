@@ -69,18 +69,6 @@ void Requester::processCookies(const QList<QNetworkCookie>& cookies)
 	}
 }
 
-bool Requester::isErrorReply(const QNetworkReply& reply)
-{
-	QNetworkReply::NetworkError replyError = reply.error();
-	if (replyError == QNetworkReply::NoError)
-	{
-		const int errorCode = reply.attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-		if ((errorCode >= 200) && (errorCode < 300))
-			return true;
-	}
-	return false;
-}
-
 // todo make converter
 void Requester::processReply(QNetworkReply& reply, FromJsonFillable& to_fill)
 {

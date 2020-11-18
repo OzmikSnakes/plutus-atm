@@ -38,9 +38,8 @@ int main(int argc, char* argv[])
 		SessionManager::getInstance(),
 		[requester, accountGetSuccess,errorHandler](const TokenInfo& _)
 		{
-			auto x = SessionManager::getInstance().current_session().value();
-			RestRequest<EmptyRequest, AccountInfo, ErrorInfo>
-				rest_request(RequestMethod::POST, "secured/account/", EmptyRequest{}, accountGetSuccess, errorHandler);
+			qInfo() << "Auahtorized successfully";
+			RestRequest<EmptyRequest, AccountInfo, ErrorInfo> rest_request(RequestMethod::POST, "secured/account/", EmptyRequest{}, accountGetSuccess, errorHandler);
 			requester->sendRequest(rest_request);
 		}
 	};

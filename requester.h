@@ -43,7 +43,6 @@ private:
 	QNetworkRequest prepareRequest(const std::string&) const;
 	void processCookies(const QList<QNetworkCookie>&);
 	static void processReply(QNetworkReply&, FromJsonFillable&);
-	static bool isErrorReply(const QNetworkReply&);
 
 	static const char* const AUTHORIZATION_HEADER_NAME;
 	static const char* const CSRF_HEADER_NAME;
@@ -55,7 +54,7 @@ void Requester::sendRequest(const RestRequest<RequestType, ResponseType, ErrorTy
 	const QByteArray dataByteArray{converter_handler_.toJson<const JsonSchemaAware&>(restRequest.request_object())};
 	const QNetworkRequest request{prepareRequest(restRequest.path())};
 	QNetworkReply* reply{nullptr};
-	//todo optimize desision making
+	//todo optimize decision making
 	switch (restRequest.method())
 	{
 	case RequestMethod::POST:
