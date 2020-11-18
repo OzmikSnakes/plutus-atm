@@ -16,7 +16,8 @@ SOURCES += \
     requests.cpp \
     responses.cpp \
     rest_request.cpp \
-    session_manager.cpp
+    session_manager.cpp \
+	response_handler.cpp
 
 HEADERS += \
     converter.h \

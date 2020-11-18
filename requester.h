@@ -5,6 +5,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 #include <QVariantMap>
+#include <QNetworkCookie>
 
 #include "rest_request.h"
 #include "converter_handler.h"
@@ -14,12 +15,11 @@
 struct RestConfiguration
 {
 	bool secured;
-	int port;
-	std::string host;
+	std::string address;
 	std::string api_path;
 	QSslConfiguration ssl_config;
 
-	RestConfiguration(bool secured_, int port_, std::string host_, std::string api_path_, const QSslConfiguration& ssl_config_);
+	RestConfiguration(bool secured_, std::string address_, std::string api_path_, const QSslConfiguration& ssl_config_);
 	QUrl root_url() const;
 };
 
@@ -40,7 +40,8 @@ private:
 	AbstractSessionManager<Session>& session_manager_;
 
 	//methods
-	QNetworkRequest createRequest(const std::string&);
+	QNetworkRequest prepareRequest(const std::string&) const;
+	void processCookies(const QList<QNetworkCookie>&);
 	static void processReply(QNetworkReply&, FromJsonFillable&);
 	static bool isErrorReply(const QNetworkReply&);
 
@@ -52,7 +53,7 @@ template <class RequestType, class ResponseType, class ErrorType>
 void Requester::sendRequest(const RestRequest<RequestType, ResponseType, ErrorType>& restRequest)
 {
 	const QByteArray dataByteArray{converter_handler_.toJson<const JsonSchemaAware&>(restRequest.request_object())};
-	const QNetworkRequest request{createRequest(restRequest.path())};
+	const QNetworkRequest request{prepareRequest(restRequest.path())};
 	QNetworkReply* reply{nullptr};
 	//todo optimize desision making
 	switch (restRequest.method())
@@ -85,25 +86,47 @@ void Requester::sendRequest(const RestRequest<RequestType, ResponseType, ErrorTy
 		reply = nullptr;
 		Q_ASSERT(false);
 	}
-
-	connect(reply, &QNetworkReply::finished, this,
-	        [this, reply, restRequest]()
-	        {
-		        if (isErrorReply(*reply))
+	if (reply)
+	{
+		connect(reply, &QNetworkReply::finished, this,
+		        [this, reply, restRequest]()
 		        {
-			        ResponseType responseObject;
-			        processReply(*reply, responseObject);
-			        restRequest.success_handler()(responseObject);
+			        const QVariant cookieVar = reply->header(QNetworkRequest::SetCookieHeader);
+			        if (cookieVar.isValid())
+			        {
+				        processCookies(cookieVar.value<QList<QNetworkCookie>>());
+			        }
+			        if (reply->error() == QNetworkReply::NoError)
+			        {
+				        ResponseType responseObject;
+				        processReply(*reply, responseObject);
+				        restRequest.success_handler()(responseObject);
+			        }
+			        reply->close();
+			        reply->deleteLater();
 		        }
-		        else
+		);
+
+		connect(reply, &QNetworkReply::errorOccurred, this,
+		        [reply, restRequest](QNetworkReply::NetworkError code)
 		        {
+			        qWarning() << "Got error code in response: " << code;
 			        ErrorType error_object;
 			        processReply(*reply, error_object);
 			        restRequest.error_handler()(error_object);
 		        }
-		        reply->close();
-		        reply->deleteLater();
-		        delete reply;
-	        });
+		);
+
+		connect(reply, &QNetworkReply::sslErrors, this,
+		        [](const QList<QSslError>& errors)
+		        {
+			        qWarning() << "SSL errors found in reply:";
+			        for (auto ssl_error : errors)
+			        {
+				        qWarning() << ssl_error;
+			        }
+		        }
+		);
+	}
 }
 #endif

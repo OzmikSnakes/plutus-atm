@@ -5,13 +5,11 @@
 #include <QBuffer>
 
 RestConfiguration::RestConfiguration(const bool secured_,
-                                     const int port_,
-                                     std::string host_,
+                                     std::string address_,
                                      std::string api_path_,
                                      const QSslConfiguration& ssl_config_)
 	: secured{secured_},
-	  port{port_},
-	  host{std::move(host_)},
+	  address{std::move(address_)},
 	  api_path{std::move(api_path_)},
 	  ssl_config{ssl_config_}
 {
@@ -19,10 +17,9 @@ RestConfiguration::RestConfiguration(const bool secured_,
 
 QUrl RestConfiguration::root_url() const
 {
-	QString requestUrl = QString::fromStdString("%1://%2:%3/%4/")
+	QString requestUrl = QString::fromStdString("%1://%2/%3/")
 	                     .arg(QString::fromStdString(secured ? "https" : "http"))
-	                     .arg(QString::fromStdString(host))
-	                     .arg(QString::fromStdString(std::to_string(port)))
+	                     .arg(QString::fromStdString(address))
 	                     .arg(QString::fromStdString(api_path));
 	return requestUrl;
 }
@@ -41,13 +38,12 @@ const QNetworkAccessManager& Requester::network_access_manager() const
 	return network_manager_;
 }
 
-QNetworkRequest Requester::createRequest(const std::string& path)
+QNetworkRequest Requester::prepareRequest(const std::string& path) const
 {
 	QNetworkRequest request;
 	QUrl request_url{rest_configuration_.root_url()};
 	request_url.setPath(request_url.path() + QString::fromStdString(path));
 	request.setUrl(request_url);
-	auto x = request_url.toDisplayString();
 	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 	const auto maybe_session = session_manager_.current_session();
 	if (maybe_session.has_value())
@@ -58,6 +54,19 @@ QNetworkRequest Requester::createRequest(const std::string& path)
 	}
 	request.setSslConfiguration(rest_configuration_.ssl_config);
 	return request;
+}
+
+void Requester::processCookies(const QList<QNetworkCookie>& cookies)
+{
+	for (QNetworkCookie cookie : cookies)
+	{
+		if (cookie.name() == "XSRF-TOKEN")
+		{
+			Session s = session_manager_.current_session().value_or(Session{"", ""});
+			s.csrf_token = cookie.value().toStdString();
+			session_manager_.current_session(s);
+		}
+	}
 }
 
 bool Requester::isErrorReply(const QNetworkReply& reply)

@@ -2,6 +2,10 @@
 #include <QString>
 #include "converter.h"
 
+class EmptyRequest final : public JsonSchemaAware {
+	QVariantMap toQVariantMap() const override;
+};
+
 class MakeTransferRequest final : public JsonSchemaAware
 {
 	QVariantMap toQVariantMap() const override;

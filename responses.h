@@ -1,5 +1,7 @@
 #pragma once
 #include <QJsonObject>
+#include <QNetworkReply>
+
 #include "converter.h"
 
 using std::string;
@@ -9,7 +11,7 @@ class ErrorInfo : public FromJsonFillable
     void fill(const QJsonObject&) override;
 public:
 	// todo make normal http status
-    size_t status;
+    QNetworkReply::NetworkError status;
     QString error;
     QString message;
 };
@@ -19,6 +21,19 @@ class TokenInfo : public FromJsonFillable
 	void fill(const QJsonObject&) override;
 public:
     QString token;
+};
+
+class AccountInfo : public FromJsonFillable
+{
+    void fill(const QJsonObject&) override;
+public:
+    long id;
+    QString number;
+	//todo decimal
+    double moneyAmount;
+    long creditTariffId;
+    long clientId;
+	
 };
 
 class CreditTariffInfo
