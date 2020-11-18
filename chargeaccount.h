@@ -22,6 +22,10 @@ private slots:
 
     void on_cancel_pushButton_clicked();
 
+    void on_comboBox_currentIndexChanged(int index);
+
+    void on_withdraw_pushButton_clicked();
+
 private:
     Ui::ChargeAccount *ui;
     CashController controller;

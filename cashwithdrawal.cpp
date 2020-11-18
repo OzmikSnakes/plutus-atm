@@ -33,11 +33,17 @@ void CashWithdrawal::on_cancel_pushButton_clicked()
 
 void CashWithdrawal::on_withdraw_pushButton_clicked()
 {
+
     QMessageBox messageBox;
     int amount = ui->spinBox->value();
-    if(controller.canWithdraw(amount)){
-    messageBox.information(0,"Congrats","All good!");
+    QMap<Nominal, int>withdrawnMoney =controller.withdrawCash(amount);
+    if(!withdrawnMoney.empty()){
+
+    messageBox.information(0,"Congrats",controller.convertFromMap(withdrawnMoney));
+    this->close();
     }
     else
      messageBox.warning(0,"Error", "Can not be withdrawn!");
+
+
 }

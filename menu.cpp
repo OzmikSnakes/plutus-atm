@@ -25,7 +25,6 @@ Menu::~Menu()
 
 void Menu::on_cashWithdrawal_toolButton_clicked()
 {
-    //hide();
     CashWithdrawal w;
     w.setModal(true);
     w.exec();
@@ -56,7 +55,6 @@ void Menu::on_toolButton_clicked()
 
 void Menu::on_automaticTransfer_toolButton_clicked()
 {
-    hide();
     AutomaticTransfer w;
     w.setModal(true);
     w.exec();

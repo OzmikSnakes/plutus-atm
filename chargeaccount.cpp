@@ -1,6 +1,8 @@
 #include "chargeaccount.h"
 #include "ui_chargeaccount.h"
 
+#include <QMessageBox>
+
 
 ChargeAccount::ChargeAccount(QWidget *parent) :
     QDialog(parent),
@@ -37,4 +39,21 @@ void ChargeAccount::on_spinBox_valueChanged(int arg1)
 void ChargeAccount::on_cancel_pushButton_clicked()
 {
     this->close();
+}
+
+void ChargeAccount::on_comboBox_currentIndexChanged(int index)
+{
+    int amount = ui->spinBox->value();
+    int nominal = ui->comboBox->currentText().toInt();
+    ui->moneyPut_label->setText(QString::number(nominal*amount));
+}
+
+void ChargeAccount::on_withdraw_pushButton_clicked()
+{
+    int amount = ui->spinBox->value();
+    int nominal = ui->comboBox->currentText().toInt();
+
+    QMessageBox messageBox;
+    if (controller.putNominal((nominal),amount)==1)
+        messageBox.information(0,"Good","Money will appear on your account within 3 min");
 }

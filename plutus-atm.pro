@@ -17,6 +17,7 @@ SOURCES += \
     login.cpp \
     main.cpp \
     menu.cpp \
+    test.cpp \
     transfer.cpp
 
 HEADERS += \
@@ -28,6 +29,7 @@ HEADERS += \
     login.h \
     menu.h \
     nominal.h \
+    test.h \
     transfer.h
 
 FORMS += \
