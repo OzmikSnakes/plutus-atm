@@ -1,5 +1,4 @@
 #pragma once
-
 #include <QtNetwork/QNetworkReply>
 #include <QtNetwork/QNetworkRequest>
 #include <QJsonDocument>

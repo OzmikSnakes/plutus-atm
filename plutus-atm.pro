@@ -10,53 +10,50 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
-    converter.cpp \
-    automatictransfer.cpp \
+    controllers/automatic_transfer.cpp \
+    controllers/cash_withdrawal.cpp \
+    controllers/charge_account.cpp \
+    controllers/credit_limit.cpp \
+    controllers/login.cpp \
+    controllers/menu.cpp \
+    controllers/transfer.cpp \
+    dto/requests.cpp \
+    dto/responses.cpp \
+    rest_communication/rest_request.cpp \
+    rest_communication/session_manager.cpp \
+    rest_communication/response_handler.cpp \
+    rest_communication/converter.cpp \
+    rest_communication/requester.cpp \
     cashcontroller.cpp \
-    cashwithdrawal.cpp \
-    chargeaccount.cpp \
-    creditlimit.cpp \
-    login.cpp \
-    main.cpp \
-    requester.cpp \
-    requests.cpp \
-    responses.cpp \
-    rest_request.cpp \
-    session_manager.cpp \
-    response_handler.cpp \
-    menu.cpp \
-    transfer.cpp \
+    main.cpp
 
 HEADERS += \
-    automatictransfer.h \
+    controllers/automatic_transfer.h \
+    controllers/cash_withdrawal.h \
+    controllers/charge_account.h \
+    controllers/credit_limit.h \
+    controllers/login.h \
+    controllers/menu.h \
+    controllers/transfer.h \
+    dto/requests.h \
+    dto/responses.h \
+    rest_communication/rest_request.h \
+    rest_communication/session_manager.h \
+    rest_communication/response_handler.h \
+    rest_communication/converter.h \
+    rest_communication/converter_handler.h \
+    rest_communication/requester.h \
     cashcontroller.h \
-    cashwithdrawal.h \
-    chargeaccount.h \
-    creditlimit.h \
-    login.h \
-    menu.h \
     nominal.h \
-    transfer.h \
-    converter.h \
-    converter_handler.h \
-    requester.h \
-    requests.h \
-    responses.h \
-    rest_request.h \
-    session_manager.h \
-    response_handler.h \
 
 FORMS += \
-    automatictransfer.ui \
-    cashwithdrawal.ui \
-    chargeaccount.ui \
-    creditlimit.ui \
+    automatic_transfer.ui \
+    cash_withdrawal.ui \
+    charge_account.ui \
+    credit_limit.ui \
     login.ui \
     menu.ui \
     transfer.ui
-
-TRANSLATIONS += \
-    plutus-atm_uk_UA.ts
 
 
 # Default rules for deployment.

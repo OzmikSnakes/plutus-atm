@@ -1,5 +1,5 @@
-#include "automatictransfer.h"
-#include "ui_automatictransfer.h"
+#include "controllers/automatic_transfer.h"
+#include "ui_automatic_transfer.h"
 
 AutomaticTransfer::AutomaticTransfer(QWidget *parent) :
     QDialog(parent),

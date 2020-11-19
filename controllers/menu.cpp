@@ -1,10 +1,10 @@
 #include "menu.h"
 #include "ui_menu.h"
-#include "cashwithdrawal.h"
-#include "chargeaccount.h"
-#include "transfer.h"
+#include "cash_withdrawal.h"
+#include "charge_account.h"
+#include "controllers/transfer.h"
 #include "login.h"
-#include "automatictransfer.h"
+#include "automatic_transfer.h"
 
 #include <QMessageBox>
 

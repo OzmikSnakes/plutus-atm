@@ -1,5 +1,4 @@
-#include "mainwindow.h"
-#include "login.h"
+#include "controllers/login.h"
 #include <QApplication>
 #include "cashcontroller.h"
 int main(int argc, char *argv[])

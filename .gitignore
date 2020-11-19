@@ -75,3 +75,4 @@ Thumbs.db
 debug
 release
 /plutus-atm.sln.DotSettings.user
+ui_*.h

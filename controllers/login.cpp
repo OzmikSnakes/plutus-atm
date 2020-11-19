@@ -1,10 +1,10 @@
-#include "login.h"
+#include "controllers/login.h"
 #include "ui_login.h"
-#include "menu.h"
+#include "controllers/menu.h"
 #include <QMessageBox>
-#include "requester.h"
-#include "requests.h"
-#include "response_handler.h"
+#include "rest_communication/requester.h"
+#include "dto/requests.h"
+#include "rest_communication/response_handler.h"
 
 Login::Login(QWidget* parent) :
 	QDialog(parent),

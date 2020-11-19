@@ -1,5 +1,4 @@
-#ifndef CASHCONTROLLER_H
-#define CASHCONTROLLER_H
+#pragma once
 #include "Nominal.h"
 #include "QMap"
 #include "QSet"
@@ -45,7 +44,3 @@ private:
     CashController():impl(new CashControllerImpl()){};
     CashControllerImpl* impl;
 };
-
-
-
-#endif // CASHCONTROLLER_H

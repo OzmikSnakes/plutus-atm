@@ -1,6 +1,4 @@
-#ifndef MENU_H
-#define MENU_H
-
+#pragma once
 #include <QDialog>
 
 namespace Ui {
@@ -31,5 +29,3 @@ private slots:
 private:
     Ui::Menu *ui;
 };
-
-#endif // MENU_H

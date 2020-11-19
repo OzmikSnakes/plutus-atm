@@ -1,5 +1,5 @@
-#include "cashwithdrawal.h"
-#include "ui_cashwithdrawal.h"
+#include "cash_withdrawal.h"
+#include "ui_cash_withdrawal.h"
 #include "menu.h"
 #include "cashcontroller.h"
 

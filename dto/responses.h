@@ -2,7 +2,7 @@
 #include <QJsonObject>
 #include <QNetworkReply>
 
-#include "converter.h"
+#include "rest_communication/converter.h"
 
 using std::string;
 

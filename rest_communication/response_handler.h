@@ -1,5 +1,5 @@
 #pragma once
-#include "responses.h"
+#include "dto/responses.h"
 #include "session_manager.h"
 
 template <class T>

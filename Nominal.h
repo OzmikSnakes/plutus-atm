@@ -1,6 +1,4 @@
-#ifndef NOMINAL_H
-#define NOMINAL_H
-
+#pragma once
 #include <QString>
 
 
@@ -20,9 +18,6 @@ public:
 };
 
 
-inline bool operator< (const Nominal& n,const Nominal& n1){
+inline bool operator<(const Nominal& n,const Nominal& n1){
  return n.getValue()< n1.getValue();
 }
-
-
-#endif // NOMINAL_H

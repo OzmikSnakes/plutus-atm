@@ -1,6 +1,4 @@
-#ifndef CREDITLIMIT_H
-#define CREDITLIMIT_H
-
+#pragma once
 #include <QDialog>
 
 namespace Ui {
@@ -18,5 +16,3 @@ public:
 private:
     Ui::CreditLimit *ui;
 };
-
-#endif // CREDITLIMIT_H

@@ -1,5 +1,4 @@
-#ifndef AUTOMATICTRANSFER_H
-#define AUTOMATICTRANSFER_H
+#pragma once
 
 #include <QDialog>
 
@@ -21,5 +20,3 @@ private slots:
 private:
     Ui::AutomaticTransfer *ui;
 };
-
-#endif // AUTOMATICTRANSFER_H

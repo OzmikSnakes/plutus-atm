@@ -1,4 +1,4 @@
-#include "transfer.h"
+#include "controllers/transfer.h"
 #include "ui_transfer.h"
 
 Transfer::Transfer(QWidget *parent) :

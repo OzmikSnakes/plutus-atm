@@ -1,5 +1,4 @@
-#ifndef CASHWITHDRAWAL_H
-#define CASHWITHDRAWAL_H
+#pragma once
 #include "cashcontroller.h"
 #include <QDialog>
 
@@ -24,5 +23,3 @@ private:
     Ui::CashWithdrawal *ui;
     CashController controller;
 };
-
-#endif // CASHWITHDRAWAL_H

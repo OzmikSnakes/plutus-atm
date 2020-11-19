@@ -1,6 +1,4 @@
-#ifndef TRANSFER_H
-#define TRANSFER_H
-
+#pragma once
 #include <QDialog>
 
 namespace Ui {
@@ -21,5 +19,3 @@ private slots:
 private:
     Ui::Transfer *ui;
 };
-
-#endif // TRANSFER_H

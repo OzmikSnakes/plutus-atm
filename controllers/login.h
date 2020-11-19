@@ -1,15 +1,11 @@
-#ifndef LOGIN_H
-#define LOGIN_H
-
+#pragma once
 #include <QDialog>
 #include <QMessageBox>
 
-#include "menu.h"
-#include "response_handler.h"
-#include "session_manager.h"
-
-
-#include "requester.h"
+#include "controllers/menu.h"
+#include "rest_communication/response_handler.h"
+#include "rest_communication/session_manager.h"
+#include "rest_communication/requester.h"
 
 namespace Ui
 {
@@ -55,5 +51,3 @@ private:
 	QString card_number;
 	Ui::Login* ui;
 };
-
-#endif // LOGIN_H

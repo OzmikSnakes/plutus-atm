@@ -1,5 +1,5 @@
-#include "creditlimit.h"
-#include "ui_creditlimit.h"
+#include "credit_limit.h"
+#include "ui_credit_limit.h"
 
 CreditLimit::CreditLimit(QWidget *parent) :
     QDialog(parent),

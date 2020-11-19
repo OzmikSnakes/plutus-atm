@@ -1,4 +1,4 @@
-#include "Requests.h"
+#include "dto/requests.h"
 #include <QJsonDocument>
 
 QByteArray JsonSchemaAwareConverter::jsonRepresentation(const JsonSchemaAware& to_convert) const

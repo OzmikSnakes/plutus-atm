@@ -1,6 +1,4 @@
-#ifndef CHARGEACCOUNT_H
-#define CHARGEACCOUNT_H
-
+#pragma once
 #include <QDialog>
 #include "cashcontroller.h"
 
@@ -30,5 +28,3 @@ private:
     Ui::ChargeAccount *ui;
     CashController controller;
 };
-
-#endif // CHARGEACCOUNT_H

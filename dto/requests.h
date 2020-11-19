@@ -1,6 +1,6 @@
 #pragma once
 #include <QString>
-#include "converter.h"
+#include "rest_communication/converter.h"
 
 class EmptyRequest final : public JsonSchemaAware {
 	QVariantMap toQVariantMap() const override;

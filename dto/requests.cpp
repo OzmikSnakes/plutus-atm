@@ -1,6 +1,5 @@
 #include <QJsonDocument>
-
-#include "Requests.h"
+#include "requests.h"
 
 // todo: think if public fields are cool
 // TODO: think about setter exceptions
