@@ -47,13 +47,13 @@ HEADERS += \
     nominal.h \
 
 FORMS += \
-    automatic_transfer.ui \
-    cash_withdrawal.ui \
-    charge_account.ui \
-    credit_limit.ui \
-    login.ui \
-    menu.ui \
-    transfer.ui
+    ui/automatic_transfer.ui \
+    ui/cash_withdrawal.ui \
+    ui/charge_account.ui \
+    ui/credit_limit.ui \
+    ui/login.ui \
+    ui/menu.ui \
+    ui/transfer.ui
 
 
 # Default rules for deployment.
