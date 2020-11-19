@@ -43,6 +43,7 @@ QNetworkRequest Requester::prepareRequest(const std::string& path) const
 	QNetworkRequest request;
 	QUrl request_url{rest_configuration_.root_url()};
 	request_url.setPath(request_url.path() + QString::fromStdString(path));
+	auto x = request_url.toDisplayString();
 	request.setUrl(request_url);
 	request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
 	const auto maybe_session = session_manager_.current_session();

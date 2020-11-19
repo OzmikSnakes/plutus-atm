@@ -23,10 +23,9 @@ SOURCES += \
     responses.cpp \
     rest_request.cpp \
     session_manager.cpp \
-	response_handler.cpp
+    response_handler.cpp \
     menu.cpp \
-    test.cpp \
-    transfer.cpp
+    transfer.cpp \
 
 HEADERS += \
     automatictransfer.h \
@@ -37,8 +36,7 @@ HEADERS += \
     login.h \
     menu.h \
     nominal.h \
-    test.h \
-    transfer.h
+    transfer.h \
     converter.h \
     converter_handler.h \
     requester.h \
@@ -46,7 +44,7 @@ HEADERS += \
     responses.h \
     rest_request.h \
     session_manager.h \
-	response_handler.h
+    response_handler.h \
 
 FORMS += \
     automatictransfer.ui \
@@ -59,6 +57,7 @@ FORMS += \
 
 TRANSLATIONS += \
     plutus-atm_uk_UA.ts
+
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
