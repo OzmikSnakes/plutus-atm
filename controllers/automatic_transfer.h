@@ -1,5 +1,7 @@
 #pragma once
 
+#include "rest_communication/requester.h"
+
 #include <QDialog>
 
 namespace Ui {

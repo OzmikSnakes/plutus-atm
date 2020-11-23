@@ -8,13 +8,18 @@
 
 #include <QMessageBox>
 
-Menu::Menu(QWidget *parent) :
+Menu::Menu(CashWithdrawal& cash_withdrawal, ChargeAccount& charge_account,
+           CreditLimit& credit_limit, Transfer& transfer, QWidget *parent) :
     QDialog(parent),
+    cash_withdrawal_(cash_withdrawal),
+    charge_account_(charge_account),
+    credit_limit_(credit_limit),
+    transfer_(transfer),
     ui(new Ui::Menu)
 {
 
     ui->setupUi(this);
-//this->setAttribute(Qt::WA_DeleteOnClose);
+    //this->setAttribute(Qt::WA_DeleteOnClose);
 }
 
 
@@ -25,43 +30,41 @@ Menu::~Menu()
 
 void Menu::on_cashWithdrawal_toolButton_clicked()
 {
-    CashWithdrawal w;
-    w.setModal(true);
-    w.exec();
+    cash_withdrawal_.setModal(true);
+    cash_withdrawal_.exec();
 }
 
 void Menu::on_chargeAccount_toolButton_clicked()
 {
-    ChargeAccount w;
-    w.setModal(true);
-    w.exec();
+
+    charge_account_.setModal(true);
+    charge_account_.exec();
 }
 
 void Menu::on_transfer_toolButton_clicked()
 {
-    Transfer w;
-    w.setModal(true);
-    w.exec();
+    transfer_.setModal(true);
+    transfer_.exec();
 }
 
 void Menu::on_toolButton_clicked()
 {
     hide();
-    Login w;
-    w.setModal(true);
-    w.exec();
-    this->close();
 }
 
 void Menu::on_automaticTransfer_toolButton_clicked()
 {
-    AutomaticTransfer w;
-    w.setModal(true);
-    w.exec();
+
 }
 
 void Menu::on_checkBallance_toolButton_clicked()
 {
     QMessageBox qm;
     qm.information(0,"Ballance"," Your ballance is: \n Your credit money:");
+}
+
+void Menu::on_creditLimit_toolButton_clicked()
+{
+    credit_limit_.setModal(true);
+    credit_limit_.exec();
 }

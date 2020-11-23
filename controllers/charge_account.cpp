@@ -1,12 +1,15 @@
 #include "charge_account.h"
 #include "ui_charge_account.h"
+#include "dto/requests.h"
+#include "dto/responses.h"
 
 #include <QMessageBox>
 
 
-ChargeAccount::ChargeAccount(QWidget *parent) :
+ChargeAccount::ChargeAccount(Requester& requester, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ChargeAccount),
+    requester_(requester),
     controller(CashController::getInstance())
 {
     ui->setupUi(this);
@@ -38,7 +41,7 @@ void ChargeAccount::on_spinBox_valueChanged(int arg1)
 
 void ChargeAccount::on_cancel_pushButton_clicked()
 {
-    this->close();
+    hide();
 }
 
 void ChargeAccount::on_comboBox_currentIndexChanged(int index)
@@ -53,7 +56,14 @@ void ChargeAccount::on_withdraw_pushButton_clicked()
     int amount = ui->spinBox->value();
     int nominal = ui->comboBox->currentText().toInt();
 
-    QMessageBox messageBox;
     if (controller.putNominal((nominal),amount)==1)
-        messageBox.information(0,"Good","Money will appear on your account within 3 min");
+    {
+        // todo: path
+        ChangeBalanceRequest request = ChangeBalanceRequest();
+        request.amount = amount;
+        requester_.sendRequest(RestRequest<ChangeBalanceRequest, AccountInfo,
+                               ErrorInfo>{RequestMethod::POST, "",
+                                          request, success_, error_});
+    }
+
 }

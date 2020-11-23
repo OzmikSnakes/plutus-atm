@@ -29,6 +29,7 @@ struct Session
 {
 	std::string jwt_token;
 	std::string csrf_token;
+    std::string cardNumber;
 	Session(std::string, std::string);
 	Session(const Session&) = default;
 };

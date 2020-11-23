@@ -17,7 +17,7 @@ class Login : public QDialog
 Q_OBJECT
 
 public:
-	explicit Login(QWidget* parent = nullptr);
+    explicit Login(Requester& requester, Menu& menu, QWidget* parent = nullptr);
 	~Login();
 
 private slots:
@@ -28,19 +28,19 @@ private slots:
 	void on_login2_pushButton_clicked();
 
 private:
-	Requester requester{
-		RestConfiguration{false, "localhost:8080", "api", QSslConfiguration::defaultConfiguration()}, SessionManager::getInstance()
-	};
-	AuthorizationResponseHandler success{
-		SessionManager::getInstance(), [](const TokenInfo& _)
-		{
-			Menu m;
-			m.setModal(true);
-			m.exec();
+    Requester& requester_;
+    Menu& menu_;
+    QString card_number_;
+    Ui::Login* ui_;
+
+    AuthorizationResponseHandler success_{
+        SessionManager::getInstance(), [this](const TokenInfo&)
+        {
+            menu_.show();
 		}
 	};
 
-	FunctionResponseHandler<ErrorInfo> error{
+    FunctionResponseHandler<ErrorInfo> error_{
 		[](const ErrorInfo& error_info)
 		{
 			QMessageBox messageBox;
@@ -48,6 +48,4 @@ private:
 		}
 
 	};
-	QString card_number;
-	Ui::Login* ui;
 };

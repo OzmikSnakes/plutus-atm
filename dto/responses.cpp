@@ -21,3 +21,14 @@ void AccountInfo::fill(const QJsonObject& json)
 	// long creditTariffId;
 	clientId = json["clientId"].toInt();
 }
+
+void TransferInfo::fill(const QJsonObject& json)
+{
+    id = json["id"].toInt();
+    fromId = json["fromId"].toDouble();
+    toId = json["toId"].toDouble();
+    transferStatus = json["transferStatus"].toString();
+    amount = json["amount"].toDouble();
+    createdWhen = json["createdWhen"].toDouble();
+    description = json["description"].toString();
+}

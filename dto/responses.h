@@ -54,3 +54,16 @@ public:
     long createdWhen;
 };
 
+class TransferInfo : public FromJsonFillable
+{
+    void fill(const QJsonObject&) override;
+public:
+    long id;
+    long fromId;
+    long toId;
+    QString transferStatus;
+    double amount;
+    long createdWhen;
+    QString description;
+};
+
