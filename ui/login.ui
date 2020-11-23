@@ -70,6 +70,9 @@
              <verstretch>0</verstretch>
             </sizepolicy>
            </property>
+           <property name="text">
+            <string>4532280486346619</string>
+           </property>
            <property name="alignment">
             <set>Qt::AlignCenter</set>
            </property>
@@ -129,6 +132,9 @@
              <horstretch>2</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="text">
+            <string>1234</string>
            </property>
            <property name="maxLength">
             <number>4</number>

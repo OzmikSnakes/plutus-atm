@@ -107,7 +107,7 @@
         </widget>
        </item>
        <item row="2" column="0">
-        <widget class="QToolButton" name="checkBallance_toolButton">
+        <widget class="QToolButton" name="check_Balance_toolButton">
          <property name="text">
           <string>Check ballance</string>
          </property>

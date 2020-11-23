@@ -7,8 +7,7 @@
 #include "rest_communication/session_manager.h"
 #include "rest_communication/requester.h"
 
-namespace Ui
-{
+namespace Ui {
 	class Login;
 }
 
@@ -17,34 +16,34 @@ class Login : public QDialog
 Q_OBJECT
 
 public:
-    explicit Login(Requester& requester, Menu& menu, QWidget* parent = nullptr);
+	explicit Login(Requester& requester, Menu& menu, QWidget* parent = nullptr);
 	~Login();
 
 private slots:
 	void on_login_pushButton_clicked();
 
-	void on_cancel_pushButton_clicked();
+	void on_cancel_pushButton_clicked() const;
 
-	void on_login2_pushButton_clicked();
+	void on_login2_pushButton_clicked() const;
 
 private:
-    Requester& requester_;
-    Menu& menu_;
-    QString card_number_;
-    Ui::Login* ui_;
+	static const QRegExp CARD_REGEX;
+	static const QRegExp PIN_REGEX;
 
-    AuthorizationResponseHandler success_{
-        SessionManager::getInstance(), [this](const TokenInfo&)
-        {
-            menu_.show();
+	Requester& requester_;
+	Menu& menu_;
+	QString card_number_;
+	Ui::Login* ui_;
+
+	AuthorizationResponseHandler successful_authentication_handler_{
+		SessionManager::getInstance(), [this](const TokenInfo&) {
+			menu_.show();
 		}
 	};
 
-    FunctionResponseHandler<ErrorInfo> error_{
-		[](const ErrorInfo& error_info)
-		{
-			QMessageBox messageBox;
-			messageBox.warning(nullptr, error_info.error, error_info.message);
+	FunctionResponseHandler<ErrorInfo> authentication_error_handler_{
+		[](const ErrorInfo& error_info) {
+			QMessageBox::warning(nullptr, error_info.error, error_info.message);
 		}
 
 	};
