@@ -36,13 +36,13 @@ public:
 	
 };
 
-class CreditTariffInfo
+class CreditTariffInfo : public FromJsonFillable
 {
+    void fill(const QJsonObject&) override;
 public:
     long id;
     double percent;
     double limit;
-    long createdWhen;
 };
 
 class ClientInfo

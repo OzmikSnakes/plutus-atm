@@ -1,5 +1,6 @@
 #pragma once
 #include <QString>
+#include <optional>
 #include "rest_communication/converter.h"
 
 class EmptyRequest final : public JsonSchemaAware {
@@ -10,10 +11,10 @@ class MakeTransferRequest final : public JsonSchemaAware
 {
 	QVariantMap toQVariantMap() const override;
 public:
-    long toId;
-	long fromId;
+    std::string toId;
+    std::optional<long> fromId;
 	double amount;
-    std::string description;
+    std::optional<std::string> description;
 };
 
 

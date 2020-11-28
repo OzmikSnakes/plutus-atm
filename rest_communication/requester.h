@@ -29,8 +29,10 @@ Q_OBJECT
 public:
 	explicit Requester(const RestConfiguration&, AbstractSessionManager<Session>&);
 	template <class RequestType, class ResponseType, class ErrorType>
-	void sendRequest(const RestRequest<RequestType, ResponseType, ErrorType>&);
+    void sendRequest(const RestRequest<RequestType, ResponseType, ErrorType>&);
 	[[nodiscard]] const QNetworkAccessManager& network_access_manager() const;
+
+    AbstractSessionManager<Session>& session_manager();
 private:
 	QNetworkAccessManager network_manager_{this};
 	RestConfiguration rest_configuration_;

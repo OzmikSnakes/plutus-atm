@@ -21,22 +21,34 @@ void Transfer::on_pushButton_clicked()
     hide();
 }
 
-void Transfer::on_pushButton2_clicked()
+void Transfer::on_transfer_pushButton_clicked()
 {
-    long toId = ui->lineEdit->text().toLong();
-    long fromId = 0;
+    FunctionResponseHandler<TransferInfo>* success_ = new FunctionResponseHandler<TransferInfo>{
+        [](const TransferInfo& transferInfo)
+        {
+            QMessageBox messageBox;
+            messageBox.information(nullptr, "Information", "Operation successfull! "
+                                   + QString::number(transferInfo.amount) +
+                                   " UAH was sent to " + transferInfo.toId + ".");
+        }
+    };
+
+    FunctionResponseHandler<ErrorInfo>* error_ = new FunctionResponseHandler<ErrorInfo>{
+        [](const ErrorInfo& error_info)
+        {
+            QMessageBox messageBox;
+            messageBox.warning(nullptr, error_info.error, error_info.message);
+        }
+    };
+
+    std::string toId = ui->lineEdit->text().toStdString();
     double amount = ui->money_doubleSpinBox->value();
     if (amount > 0)
     {
-        // todo: path
         MakeTransferRequest request = MakeTransferRequest();
         request.amount = amount;
         request.toId = toId;
-        request.description = "Send " + std::to_string(amount) + " UAH to " + std::to_string(toId) + ".";
         requester_.sendRequest(RestRequest<MakeTransferRequest, TransferInfo,
-                               ErrorInfo>{RequestMethod::POST, "",
-                                          request, success_, error_});
+                               ErrorInfo>{RequestMethod::POST, "secured/transfer/makeTransfer",request, success_, error_});
     }
 }
-
-

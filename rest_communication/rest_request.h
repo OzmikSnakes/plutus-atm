@@ -9,12 +9,12 @@ template <class RequestType, class ResponseType, class ErrorType>
 class RestRequest
 {
 public:
-	RestRequest(RequestMethod method, const std::string& path, const RequestType& request_object, const AbstractResponseHandler<ResponseType>& success_handler,
-	            const AbstractResponseHandler<ErrorType>& error_handler)
+    RestRequest(RequestMethod method, const std::string& path, const RequestType& request_object, AbstractResponseHandler<ResponseType>* success_handler,
+                 AbstractResponseHandler<ErrorType>* error_handler)
 		: method_(method),
 		  path_(path),
 		  request_object_(request_object),
-		  success_handler_(success_handler),
+          success_handler_(success_handler),
 		  error_handler_(error_handler)
 	{
 	}
@@ -24,14 +24,14 @@ public:
 	const RequestType& request_object() const;
 
 	const AbstractResponseHandler<ResponseType>& success_handler() const;
-	const AbstractResponseHandler<ErrorType>& error_handler() const;
+    const AbstractResponseHandler<ErrorType>& error_handler() const;
 
 private:
 	RequestMethod method_;
 	std::string path_;
 	RequestType request_object_;
-	const AbstractResponseHandler<ResponseType>& success_handler_;
-	const AbstractResponseHandler<ErrorType>& error_handler_;
+    AbstractResponseHandler<ResponseType>* success_handler_;
+    AbstractResponseHandler<ErrorType>* error_handler_;
 };
 
 template <class RequestType, class ResponseType, class ErrorType>
@@ -55,11 +55,11 @@ const std::string& RestRequest<RequestType, ResponseType, ErrorType>::path() con
 template <class RequestType, class ResponseType, class ErrorType>
 const AbstractResponseHandler<ResponseType>& RestRequest<RequestType, ResponseType, ErrorType>::success_handler() const
 {
-	return success_handler_;
+    return *success_handler_;
 }
 
 template <class RequestType, class ResponseType, class ErrorType>
 const AbstractResponseHandler<ErrorType>& RestRequest<RequestType, ResponseType, ErrorType>::error_handler() const
 {
-	return error_handler_;
+    return *error_handler_;
 }

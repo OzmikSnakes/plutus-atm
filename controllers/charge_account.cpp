@@ -4,8 +4,6 @@
 #include "dto/responses.h"
 
 #include <QMessageBox>
-
-
 ChargeAccount::ChargeAccount(Requester& requester, QWidget *parent) :
     QDialog(parent),
     ui(new Ui::ChargeAccount),
@@ -24,14 +22,10 @@ ChargeAccount::ChargeAccount(Requester& requester, QWidget *parent) :
   ui->moneyPut_label->setText(QString::number(amount*nominal));
 }
 
-
-
 ChargeAccount::~ChargeAccount()
 {
     delete ui;
 }
-
-
 
 void ChargeAccount::on_spinBox_valueChanged(int arg1)
 {
@@ -56,14 +50,28 @@ void ChargeAccount::on_withdraw_pushButton_clicked()
     int amount = ui->spinBox->value();
     int nominal = ui->comboBox->currentText().toInt();
 
+    FunctionResponseHandler<TransferInfo>* success_ = new FunctionResponseHandler<TransferInfo>{
+        [](const TransferInfo& transferInfo)
+        {
+            QMessageBox messageBox;
+            messageBox.information(nullptr, "Information", "Operation successfull!");
+        }
+    };
+
+    FunctionResponseHandler<ErrorInfo>* error_ = new FunctionResponseHandler<ErrorInfo>{
+        [](const ErrorInfo& error_info)
+        {
+            QMessageBox messageBox;
+            messageBox.warning(nullptr, error_info.error, error_info.message);
+        }
+    };
+    // todo
     if (controller.putNominal((nominal),amount)==1)
     {
         // todo: path
         ChangeBalanceRequest request = ChangeBalanceRequest();
-        request.amount = amount;
-        requester_.sendRequest(RestRequest<ChangeBalanceRequest, AccountInfo,
-                               ErrorInfo>{RequestMethod::POST, "",
-                                          request, success_, error_});
+        request.amount = nominal * amount;
+        requester_.sendRequest(RestRequest<ChangeBalanceRequest, TransferInfo,ErrorInfo>{RequestMethod::POST, "secured/transfer/changeBalance", request, success_, error_});
     }
 
 }

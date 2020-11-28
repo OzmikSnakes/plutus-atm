@@ -32,3 +32,10 @@ void TransferInfo::fill(const QJsonObject& json)
     createdWhen = json["createdWhen"].toDouble();
     description = json["description"].toString();
 }
+
+void CreditTariffInfo::fill(const QJsonObject& json)
+{
+    id = json["id"].toInt();
+    percent = json["percent"].toDouble();
+    limit = json["limit"].toDouble();
+}

@@ -4,7 +4,7 @@
 int main(int argc, char* argv[]) {
 	QApplication a(argc, argv);
 #ifdef _DEBUG
-	RestConfiguration config = RestConfiguration(false, "localhost:8080", "api", QSslConfiguration::defaultConfiguration());
+	RestConfiguration config = RestConfiguration(true, "plutus-system.herokuapp.com", "api", QSslConfiguration::defaultConfiguration());
 #endif
 	Requester requester{config, SessionManager::getInstance()};
 	CashWithdrawal cash_withdrawal{requester};

@@ -31,3 +31,8 @@ std::optional<Session> SessionManager::get_current_session() const
 	}
 	return std::nullopt;
 }
+
+void SessionManager::clear_session(){
+    delete cur_session_;
+    cur_session_ = nullptr;
+}

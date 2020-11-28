@@ -7,9 +7,11 @@ class AbstractSessionManager
 {
 	[[nodiscard]] virtual std::optional<T> get_current_session() const = 0;
 	virtual void set_current_session(const T&) = 0;
+    virtual void clear_session() = 0;
 public:
 	[[nodiscard]] std::optional<T> current_session() const;
 	void current_session(const T&);
+    void clear_current_session();
 	virtual ~AbstractSessionManager() = default;
 };
 
@@ -23,6 +25,11 @@ template <class T>
 void AbstractSessionManager<T>::current_session(const T& session)
 {
 	return set_current_session(session);
+}
+
+template <class T>
+void AbstractSessionManager<T>::clear_current_session(){
+    clear_session();
 }
 
 struct Session
@@ -45,5 +52,6 @@ private:
 
 	void set_current_session(const Session&) override;
 	[[nodiscard]] std::optional<Session> get_current_session() const override;
+    void clear_session() override;
 	SessionManager() = default;
 };

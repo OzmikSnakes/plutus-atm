@@ -30,17 +30,31 @@ void CashWithdrawal::on_cancel_pushButton_clicked()
 
 void CashWithdrawal::on_withdraw_pushButton_clicked()
 {
+    FunctionResponseHandler<TransferInfo>* success_ = new FunctionResponseHandler<TransferInfo>{
+        [this](const TransferInfo& transferInfo)
+        {
+            QString message{"Operation successfull!"};
+            QMessageBox::information(this, "Information", message);
+        }
+    };
+
+    FunctionResponseHandler<ErrorInfo>* error_ = new FunctionResponseHandler<ErrorInfo>{
+        [](const ErrorInfo& error_info)
+        {
+            QMessageBox messageBox;
+            messageBox.warning(nullptr, error_info.error, error_info.message);
+        }
+    };
+
     QMessageBox messageBox;
     int amount = ui->spinBox->value();
     QMap<Nominal, int> withdrawnMoney = controller.withdrawCash(amount);
     if (!withdrawnMoney.empty())
     {
-        // todo: path
         ChangeBalanceRequest request = ChangeBalanceRequest();
         request.amount = -amount;
-        requester_.sendRequest(RestRequest<ChangeBalanceRequest, AccountInfo,
-                               ErrorInfo>{RequestMethod::POST, "",
-                                          request, success_, error_});
+        requester_.sendRequest(RestRequest<ChangeBalanceRequest, TransferInfo, ErrorInfo>{
+                                   RequestMethod::POST, "secured/transfer/changeBalance",request, success_, error_});
 
     } else
     {

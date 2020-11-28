@@ -88,3 +88,7 @@ void Requester::processReply(QNetworkReply& reply, FromJsonFillable& to_fill)
 	}
 	delete parseError;
 }
+
+AbstractSessionManager<Session>& Requester::session_manager(){
+    return session_manager_;
+}

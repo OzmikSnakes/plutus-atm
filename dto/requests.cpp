@@ -16,10 +16,14 @@ QVariantMap EmptyRequest::toQVariantMap() const
 QVariantMap MakeTransferRequest::toQVariantMap() const
 {
 	QVariantMap map;
-	map["toId"] = QString::number(toId);
-	map["fromId"] = QString::number(fromId);
+    map["toId"] = QString::fromStdString(toId);
+    if(fromId.has_value()){
+        map["fromId"] = QString::number(fromId.value());
+    }
 	map["amount"] = amount;
-	map["description"] = QString::fromStdString(description);
+    if(description.has_value()){
+        map["description"] = QString::fromStdString(description.value());
+    }
 	return map;
 }
 

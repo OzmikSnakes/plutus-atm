@@ -39,6 +39,19 @@ void Login::on_cancel_pushButton_clicked() const {
 }
 
 void Login::on_login2_pushButton_clicked() const {
+    AuthorizationResponseHandler* successful_authentication_handler_ = new AuthorizationResponseHandler{
+        SessionManager::getInstance(), [this](const TokenInfo&) {
+            menu_.show();
+        }
+    };
+
+    FunctionResponseHandler<ErrorInfo>* authentication_error_handler_ = new FunctionResponseHandler<ErrorInfo>{
+        [](const ErrorInfo& error_info) {
+            QMessageBox::warning(nullptr, error_info.error, error_info.message);
+        }
+
+    };
+
 	QString pin = ui_->password_lineEdit->text().trimmed();
 	if (PIN_REGEX.exactMatch(pin)) {
 		ATMTokenRequest login_request;

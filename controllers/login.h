@@ -34,17 +34,4 @@ private:
 	Menu& menu_;
 	QString card_number_;
 	Ui::Login* ui_;
-
-	AuthorizationResponseHandler successful_authentication_handler_{
-		SessionManager::getInstance(), [this](const TokenInfo&) {
-			menu_.show();
-		}
-	};
-
-	FunctionResponseHandler<ErrorInfo> authentication_error_handler_{
-		[](const ErrorInfo& error_info) {
-			QMessageBox::warning(nullptr, error_info.error, error_info.message);
-		}
-
-	};
 };

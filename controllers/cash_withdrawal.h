@@ -26,22 +26,4 @@ private:
     Requester& requester_;
     Ui::CashWithdrawal *ui;
     CashController controller;
-
-    FunctionResponseHandler<AccountInfo> success_{
-        [](const AccountInfo& accountInfo)
-        {
-            QMessageBox messageBox;
-            messageBox.information(nullptr, "Information", "Operation successfull! "
-                                   + QString::number(accountInfo.moneyAmount) +
-                                   " UAH is on your card.");
-        }
-    };
-
-    FunctionResponseHandler<ErrorInfo> error_{
-        [](const ErrorInfo& error_info)
-        {
-            QMessageBox messageBox;
-            messageBox.warning(nullptr, error_info.error, error_info.message);
-        }
-    };
 };
