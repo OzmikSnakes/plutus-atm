@@ -70,7 +70,6 @@ void Requester::processCookies(const QList<QNetworkCookie>& cookies)
 	}
 }
 
-// todo make converter
 void Requester::processReply(QNetworkReply& reply, FromJsonFillable& to_fill)
 {
 	QJsonParseError* parseError{nullptr};
@@ -78,7 +77,6 @@ void Requester::processReply(QNetworkReply& reply, FromJsonFillable& to_fill)
 	const QJsonDocument jsonDoc{QJsonDocument::fromJson(replyDataByteArray, parseError)};
 	if (parseError && parseError->error != QJsonParseError::NoError)
 	{
-		//todo throw exception
 		qDebug() << replyDataByteArray;
 		qWarning() << "Json parse error: " << parseError->errorString();
 	}

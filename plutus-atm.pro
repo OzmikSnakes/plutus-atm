@@ -13,7 +13,6 @@ SOURCES += \
     controllers/automatic_transfer.cpp \
     controllers/cash_withdrawal.cpp \
     controllers/charge_account.cpp \
-    controllers/credit_limit.cpp \
     controllers/login.cpp \
     controllers/menu.cpp \
     controllers/transfer.cpp \
@@ -31,7 +30,6 @@ HEADERS += \
     controllers/automatic_transfer.h \
     controllers/cash_withdrawal.h \
     controllers/charge_account.h \
-    controllers/credit_limit.h \
     controllers/login.h \
     controllers/menu.h \
     controllers/transfer.h \
@@ -50,7 +48,6 @@ FORMS += \
     ui/automatic_transfer.ui \
     ui/cash_withdrawal.ui \
     ui/charge_account.ui \
-    ui/credit_limit.ui \
     ui/login.ui \
     ui/menu.ui \
     ui/transfer.ui

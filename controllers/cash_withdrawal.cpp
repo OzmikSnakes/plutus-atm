@@ -18,6 +18,10 @@ CashWithdrawal::CashWithdrawal(Requester& requester, QWidget *parent) :
     ui->nominas->setText(controller.nominalsAvailableString());
 }
 
+void CashWithdrawal::set_menu(Menu& menu) {
+    menu_ = &menu;
+}
+
 CashWithdrawal::~CashWithdrawal()
 {
     delete ui;
@@ -26,6 +30,7 @@ CashWithdrawal::~CashWithdrawal()
 void CashWithdrawal::on_cancel_pushButton_clicked()
 {
     hide();
+    menu_->show();
 }
 
 void CashWithdrawal::on_withdraw_pushButton_clicked()

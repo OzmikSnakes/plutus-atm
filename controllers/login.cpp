@@ -9,10 +9,9 @@
 const QRegExp Login::CARD_REGEX{"\\d{16}"};
 const QRegExp Login::PIN_REGEX{"\\d{4}"};
 
-Login::Login(Requester& requester, Menu& menu, QWidget* parent) :
+Login::Login(Requester& requester, QWidget* parent) :
 	QDialog(parent),
 	requester_(requester),
-	menu_(menu),
 	ui_(new Ui::Login) // new?
 {
 	ui_->setupUi(this);
@@ -33,15 +32,16 @@ void Login::on_login_pushButton_clicked() {
 	}
 }
 
-void Login::on_cancel_pushButton_clicked() const {
+void Login::on_cancel_pushButton_clicked() {
 	ui_->card_lineField->clear();
 	ui_->stackedWidget->setCurrentIndex(0);
 }
 
-void Login::on_login2_pushButton_clicked() const {
+void Login::on_login2_pushButton_clicked() {
     AuthorizationResponseHandler* successful_authentication_handler_ = new AuthorizationResponseHandler{
         SessionManager::getInstance(), [this](const TokenInfo&) {
-            menu_.show();
+			hide();
+            menu_->show();
         }
     };
 
@@ -64,4 +64,8 @@ void Login::on_login2_pushButton_clicked() const {
 	else {
 		QMessageBox::warning(nullptr, "Error", "Invalid pin code format!");
 	}
+}
+
+void Login::set_menu(Menu& menu) {
+	menu_ = &menu;
 }

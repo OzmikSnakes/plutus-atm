@@ -33,6 +33,5 @@ std::optional<Session> SessionManager::get_current_session() const
 }
 
 void SessionManager::clear_session(){
-    delete cur_session_;
-    cur_session_ = nullptr;
+	cur_session_->jwt_token = "";
 }

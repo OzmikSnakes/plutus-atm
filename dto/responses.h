@@ -10,7 +10,6 @@ class ErrorInfo : public FromJsonFillable
 {
     void fill(const QJsonObject&) override;
 public:
-	// todo make normal http status
     QNetworkReply::NetworkError status;
     QString error;
     QString message;

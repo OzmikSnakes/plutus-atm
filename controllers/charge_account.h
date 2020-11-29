@@ -4,10 +4,12 @@
 #include "rest_communication/requester.h"
 #include "dto/requests.h"
 #include <QMessageBox>
+#include <controllers/menu.h>
 
 namespace Ui {
 class ChargeAccount;
 }
+
 
 class ChargeAccount : public QDialog
 {
@@ -15,6 +17,7 @@ class ChargeAccount : public QDialog
 
 public:
     explicit ChargeAccount(Requester& requester, QWidget *parent = nullptr);
+    void set_menu(Menu&);
     ~ChargeAccount();
 
 private slots:
@@ -28,6 +31,7 @@ private slots:
     void on_withdraw_pushButton_clicked();
 
 private:
+    Menu* menu_;
     Ui::ChargeAccount *ui;
     Requester& requester_;
     CashController controller;

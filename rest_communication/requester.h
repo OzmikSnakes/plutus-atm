@@ -10,6 +10,7 @@
 #include "converter_handler.h"
 #include "converter.h"
 #include "session_manager.h"
+#include <stdexcept>
 
 struct RestConfiguration
 {
@@ -19,7 +20,7 @@ struct RestConfiguration
 	QSslConfiguration ssl_config;
 
 	RestConfiguration(bool secured_, std::string address_, std::string api_path_, const QSslConfiguration& ssl_config_);
-	QUrl root_url() const;
+	[[nodiscard]] QUrl root_url() const;
 };
 
 #ifdef Q_OBJECT
@@ -29,10 +30,10 @@ Q_OBJECT
 public:
 	explicit Requester(const RestConfiguration&, AbstractSessionManager<Session>&);
 	template <class RequestType, class ResponseType, class ErrorType>
-    void sendRequest(const RestRequest<RequestType, ResponseType, ErrorType>&);
+	void sendRequest(const RestRequest<RequestType, ResponseType, ErrorType>&);
 	[[nodiscard]] const QNetworkAccessManager& network_access_manager() const;
 
-    AbstractSessionManager<Session>& session_manager();
+	AbstractSessionManager<Session>& session_manager();
 private:
 	QNetworkAccessManager network_manager_{this};
 	RestConfiguration rest_configuration_;
@@ -54,7 +55,6 @@ void Requester::sendRequest(const RestRequest<RequestType, ResponseType, ErrorTy
 	const QByteArray dataByteArray{converter_handler_.toJson<const JsonSchemaAware&>(restRequest.request_object())};
 	const QNetworkRequest request{prepareRequest(restRequest.path())};
 	QNetworkReply* reply{nullptr};
-	//todo optimize decision making
 	switch (restRequest.method()) {
 	case RequestMethod::POST:
 		reply = network_manager_.post(request, dataByteArray);
@@ -73,14 +73,12 @@ void Requester::sendRequest(const RestRequest<RequestType, ResponseType, ErrorTy
 			reply = network_manager_.deleteResource(request);
 		}
 		else {
-			// todo throw exception
+			throw std::invalid_argument("Delete method is not supported with body yet!");
 		}
 		break;
 
 	default:
-		// todo throw exception
-		reply = nullptr;
-		Q_ASSERT(false);
+        throw std::invalid_argument("Method " + std::to_string(restRequest.method()) + " is not supported!");
 	}
 	if (reply) {
 		connect(reply, &QNetworkReply::finished, this,
@@ -100,7 +98,7 @@ void Requester::sendRequest(const RestRequest<RequestType, ResponseType, ErrorTy
 		);
 
 		connect(reply, &QNetworkReply::errorOccurred, this,
-		        [reply, restRequest](QNetworkReply::NetworkError code) {
+		        [reply, restRequest](const QNetworkReply::NetworkError code) {
 			        qWarning() << "Got error code in response: " << code;
 			        ErrorType error_object;
 			        processReply(*reply, error_object);

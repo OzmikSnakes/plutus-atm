@@ -2,7 +2,7 @@
 #include "converter.h"
 #include "response_handler.h"
 
-enum RequestMethod { GET, POST, PUT, DELETE, PATCH };
+enum RequestMethod { GET, POST, PUT, DELETE };
 
 // todo do with builder pattern
 template <class RequestType, class ResponseType, class ErrorType>
@@ -19,8 +19,8 @@ public:
 	{
 	}
 
-	const RequestMethod& method() const;
-	const std::string& path() const;
+    [[nodiscard]] const RequestMethod& method() const;
+    [[nodiscard]] const std::string& path() const;
 	const RequestType& request_object() const;
 
 	const AbstractResponseHandler<ResponseType>& success_handler() const;

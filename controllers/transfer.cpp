@@ -11,6 +11,10 @@ Transfer::Transfer(Requester& requester, QWidget *parent) :
     ui->setupUi(this);
 }
 
+void Transfer::set_menu(Menu& menu) {
+    menu_ = &menu;
+}
+
 Transfer::~Transfer()
 {
     delete ui;
@@ -19,6 +23,7 @@ Transfer::~Transfer()
 void Transfer::on_pushButton_clicked()
 {
     hide();
+    menu_->show();
 }
 
 void Transfer::on_transfer_pushButton_clicked()

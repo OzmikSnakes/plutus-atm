@@ -22,6 +22,10 @@ ChargeAccount::ChargeAccount(Requester& requester, QWidget *parent) :
   ui->moneyPut_label->setText(QString::number(amount*nominal));
 }
 
+void ChargeAccount::set_menu(Menu& menu) {
+    menu_ = &menu;
+}
+
 ChargeAccount::~ChargeAccount()
 {
     delete ui;
@@ -36,6 +40,7 @@ void ChargeAccount::on_spinBox_valueChanged(int arg1)
 void ChargeAccount::on_cancel_pushButton_clicked()
 {
     hide();
+    menu_->show();
 }
 
 void ChargeAccount::on_comboBox_currentIndexChanged(int index)
@@ -68,9 +73,8 @@ void ChargeAccount::on_withdraw_pushButton_clicked()
     // todo
     if (controller.putNominal((nominal),amount)==1)
     {
-        // todo: path
         ChangeBalanceRequest request = ChangeBalanceRequest();
-        request.amount = nominal * amount;
+        request.amount = amount * nominal;
         requester_.sendRequest(RestRequest<ChangeBalanceRequest, TransferInfo,ErrorInfo>{RequestMethod::POST, "secured/transfer/changeBalance", request, success_, error_});
     }
 

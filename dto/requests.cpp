@@ -1,8 +1,6 @@
 #include <QJsonDocument>
 #include "requests.h"
 
-// todo: think if public fields are cool
-// TODO: think about setter exceptions
 QVariantMap JsonSchemaAware::jsonSchema() const
 {
 	return toQVariantMap();

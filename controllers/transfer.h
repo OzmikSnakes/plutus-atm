@@ -2,10 +2,13 @@
 #include <QDialog>
 #include <QMessageBox>
 #include "rest_communication/requester.h"
+#include <controllers/menu.h>
 
 namespace Ui {
 class Transfer;
 }
+
+class Menu;
 
 class Transfer : public QDialog
 {
@@ -13,6 +16,7 @@ class Transfer : public QDialog
 
 public:
     explicit Transfer(Requester& requester, QWidget *parent = nullptr);
+    void set_menu(Menu&);
     ~Transfer();
 
 private slots:
@@ -20,6 +24,7 @@ private slots:
     void on_transfer_pushButton_clicked();
 
 private:
+    Menu* menu_;
     Ui::Transfer *ui;
     Requester& requester_;
 };
